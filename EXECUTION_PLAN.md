@@ -24,61 +24,61 @@
 > **Estimated time:** 2–3 hours
 
 ### 0.1 — Repository Setup
-- [ ] Create a GitHub repository named `todoflow`
-- [ ] Clone it locally into `d:/projects/personal-projects/to-do-list/`
-- [ ] Create `.gitignore` in root (ignore `node_modules`, `.env`, `dist`)
-- [ ] Create `README.md` with a one-line description
+- [x] Create a GitHub repository named `todoflow`
+- [x] Clone it locally into `d:/projects/personal-projects/to-do-list/`
+- [x] Create `.gitignore` in root (ignore `node_modules`, `.env`, `dist`)
+- [x] Create `README.md` with a one-line description
 
 ### 0.2 — Backend Scaffold (`server/`)
-- [ ] Create the `server/` directory
-- [ ] Run `npm init -y` inside `server/`
-- [ ] Install core dependencies:
+- [x] Create the `server/` directory
+- [x] Run `npm init -y` inside `server/`
+- [x] Install core dependencies:
   ```bash
   npm install express cors dotenv
   npm install -D nodemon
   ```
-- [ ] Create `server/index.js` — basic Express server on port 5000
-- [ ] Create `server/src/app.js` — Express app with `/api/health` test route
-- [ ] Add `dev` script to `server/package.json` using nodemon
-- [ ] 🧪 **Test:** `GET http://localhost:5000/api/health` returns `{ status: "ok" }`
+- [x] Create `server/index.js` — basic Express server on port 5000
+- [x] Create `server/src/app.js` — Express app with `/api/health` test route
+- [x] Add `dev` script to `server/package.json` using nodemon
+- [x] 🧪 **Test:** `GET http://localhost:5000/api/health` returns `{ status: "ok" }`
 
 ### 0.3 — Database Setup (Prisma + Supabase)
 - [ ] 🔴 Create a Supabase project and copy the **connection string**
-- [ ] Install Prisma:
+- [x] Install Prisma:
   ```bash
   npm install prisma @prisma/client
   npx prisma init
   ```
-- [ ] Paste full schema (User, Todo, Subtask, Tag, Priority) into `prisma/schema.prisma`
-- [ ] Create `server/.env` with `DATABASE_URL`, `JWT_SECRET`, `PORT=5000`
+- [x] Paste full schema (User, Todo, Subtask, Tag, Priority) into `prisma/schema.prisma`
+- [x] Create `server/.env` with `DATABASE_URL`, `JWT_SECRET`, `PORT=5000`
 - [ ] Run first migration:
   ```bash
   npx prisma migrate dev --name init
   npx prisma generate
   ```
-- [ ] Create `server/src/config/db.js` — export singleton PrismaClient
+- [x] Create `server/src/config/db.js` — export singleton PrismaClient
 - [ ] 🧪 **Test:** `npx prisma studio` opens and shows all 4 tables
 
 ### 0.4 — Frontend Scaffold (`client/`)
-- [ ] Scaffold Vite + React app:
+- [x] Scaffold Vite + React app:
   ```bash
   npm create vite@latest client -- --template react
   cd client && npm install
   ```
-- [ ] Install Tailwind CSS:
+- [x] Install Tailwind CSS:
   ```bash
   npm install -D tailwindcss postcss autoprefixer
   npx tailwindcss init -p
   ```
-- [ ] Configure `tailwind.config.js` content paths
-- [ ] Add Tailwind directives to `src/index.css`
-- [ ] Install other frontend dependencies:
+- [x] Configure `tailwind.config.js` content paths
+- [x] Add Tailwind directives to `src/index.css`
+- [x] Install other frontend dependencies:
   ```bash
   npm install axios zustand react-router-dom
   ```
-- [ ] Create `client/.env` with `VITE_API_URL=http://localhost:5000`
-- [ ] Clean up the default Vite boilerplate in `App.jsx`
-- [ ] 🧪 **Test:** `npm run dev` — blank page loads at `http://localhost:5173` with no console errors
+- [x] Create `client/.env` with `VITE_API_URL=http://localhost:5000`
+- [x] Clean up the default Vite boilerplate in `App.jsx`
+- [x] 🧪 **Test:** `npm run dev` — blank page loads at `http://localhost:5173` with no console errors
 
 ---
 

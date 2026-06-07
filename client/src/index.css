@@ -1,0 +1,5 @@
+@import "tailwindcss";
+
+/* Custom utility classes if any */
+@layer utilities {
+}
