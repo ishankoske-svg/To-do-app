@@ -1,0 +1,8 @@
+# Node.js dependencies
+node_modules/
+
+# Environment variables (NEVER commit this!)
+.env
+
+# Build output
+dist/
