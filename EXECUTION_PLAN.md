@@ -88,28 +88,28 @@
 > **Note:** No auth yet — we'll use a hardcoded `userId` for now.
 
 ### 1.1 — Server Structure
-- [ ] Create folder structure inside `server/src/`:
+- [x] Create folder structure inside `server/src/`:
   - `controllers/`, `routes/`, `middleware/`, `schemas/`, `config/`
-- [ ] Create `server/src/middleware/error.middleware.js` — global error handler
-- [ ] Wire up error middleware in `app.js`
+- [x] Create `server/src/middleware/error.middleware.js` — global error handler
+- [x] Wire up error middleware in `app.js`
 
 ### 1.2 — Zod Validation
-- [ ] Install Zod: `npm install zod`
-- [ ] Create `server/src/schemas/todo.schema.js`:
+- [x] Install Zod: `npm install zod`
+- [x] Create `server/src/schemas/todo.schema.js`:
   - `createTodoSchema` — requires `title`, optional `description`, `priority`, `dueDate`
   - `updateTodoSchema` — all fields optional
-- [ ] Create `server/src/middleware/validate.middleware.js` — reusable Zod middleware
+- [x] Create `server/src/middleware/validate.middleware.js` — reusable Zod middleware
 
 ### 1.3 — Todo Routes & Controllers
-- [ ] Create `server/src/controllers/todo.controller.js` with handlers:
+- [x] Create `server/src/controllers/todo.controller.js` with handlers:
   - `getAllTodos` — fetch all todos for hardcoded userId
   - `createTodo` — create new todo
   - `getTodoById` — get single todo (with subtasks + tags)
   - `updateTodo` — update fields
   - `deleteTodo` — delete todo
   - `toggleComplete` — flip `completed` boolean
-- [ ] Create `server/src/routes/todo.routes.js` — wire routes to controllers
-- [ ] Mount todo routes in `app.js` at `/api/todos`
+- [x] Create `server/src/routes/todo.routes.js` — wire routes to controllers
+- [x] Mount todo routes in `app.js` at `/api/todos`
 
 ### 1.4 — Test All Todo Endpoints
 - [ ] 🧪 `POST /api/todos` — creates a todo, returns it
@@ -126,24 +126,24 @@
 > **Estimated time:** 4–5 hours
 
 ### 1.5 — Zustand Store
-- [ ] Create `client/src/store/todoStore.js`:
+- [x] Create `client/src/store/todoStore.js`:
   - State: `todos`, `isLoading`, `error`
   - Actions: `fetchTodos`, `addTodo`, `deleteTodo`, `toggleTodo`, `updateTodo`
 
 ### 1.6 — Axios API Layer
-- [ ] Create `client/src/api/todos.api.js` — one function per endpoint
-- [ ] Create base Axios instance with `VITE_API_URL` as base URL
+- [x] Create `client/src/api/todos.api.js` — one function per endpoint
+- [x] Create base Axios instance with `VITE_API_URL` as base URL
 
 ### 1.7 — Core Components
-- [ ] Create `client/src/components/todos/TodoForm.jsx` — input + submit button
-- [ ] Create `client/src/components/todos/TodoItem.jsx` — checkbox, title, delete button
-- [ ] Create `client/src/components/todos/TodoList.jsx` — maps over todos
-- [ ] Create `client/src/components/common/EmptyState.jsx` — shown when list is empty
+- [x] Create `client/src/components/todos/TodoForm.jsx` — input + submit button
+- [x] Create `client/src/components/todos/TodoItem.jsx` — checkbox, title, delete button
+- [x] Create `client/src/components/todos/TodoList.jsx` — maps over todos
+- [x] Create `client/src/components/common/EmptyState.jsx` — shown when list is empty
 
 ### 1.8 — Dashboard Page
-- [ ] Create `client/src/pages/DashboardPage.jsx`
-- [ ] Wire up: load todos on mount → show list → form adds → delete works
-- [ ] Set up React Router in `App.jsx` with route `/` → `DashboardPage`
+- [x] Create `client/src/pages/DashboardPage.jsx`
+- [x] Wire up: load todos on mount → show list → form adds → delete works
+- [x] Set up React Router in `App.jsx` with route `/` → `DashboardPage`
 
 ### 1.9 — Test Frontend CRUD
 - [ ] 🧪 Add a todo — appears in list

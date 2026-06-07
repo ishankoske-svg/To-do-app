@@ -1,11 +1,16 @@
 import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import DashboardPage from './pages/DashboardPage';
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center">
-      <h1 className="text-4xl font-bold text-indigo-600 mb-4">TodoFlow</h1>
-      <p className="text-lg text-gray-600">Frontend and Backend scaffolding complete!</p>
-    </div>
+    <BrowserRouter>
+      <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-indigo-100 selection:text-indigo-900">
+        <Routes>
+          <Route path="/" element={<DashboardPage />} />
+        </Routes>
+      </div>
+    </BrowserRouter>
   );
 }
 
