@@ -15,6 +15,7 @@ app.get('/api/health', (req, res) => {
 });
 
 app.use('/api/todos', todoRoutes);
+app.use('/api/tags', require('./routes/tag.routes'));
 
 // Error handling middleware MUST be added after all routes
 app.use(errorHandler);

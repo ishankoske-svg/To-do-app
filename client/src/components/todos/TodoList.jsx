@@ -2,25 +2,27 @@
 import React from 'react';
 import TodoItem from './TodoItem';
 import EmptyState from '../common/EmptyState';
+import Spinner from '../common/Spinner';
 import { useTodoStore } from '../../store/todoStore';
 
 const TodoList = () => {
   const todos = useTodoStore(state => state.todos);
   const isLoading = useTodoStore(state => state.isLoading);
+  const filters = useTodoStore(state => state.filters);
 
-  if (isLoading) {
-    return (
-      <div className="p-8 text-center text-gray-500 flex justify-center items-center gap-2 mt-4">
-        <div className="w-5 h-5 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
-        Loading todos...
-      </div>
-    );
-  }
-  
-  if (todos.length === 0) return <EmptyState />;
+  // Check if any filter is actively applied — helps EmptyState show the right message
+  const hasActiveFilters =
+    filters.completed !== null ||
+    filters.priority !== null ||
+    filters.tag !== null ||
+    filters.search !== '';
+
+  if (isLoading) return <Spinner />;
+
+  if (todos.length === 0) return <EmptyState isFiltered={hasActiveFilters} />;
 
   return (
-    <div className="mt-6 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div className="mt-4 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
       {todos.map(todo => (
         <TodoItem key={todo.id} todo={todo} />
       ))}
@@ -29,3 +31,5 @@ const TodoList = () => {
 };
 
 export default TodoList;
+
+// ✅ DONE

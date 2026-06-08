@@ -1,4 +1,3 @@
-// d:\projects\personal-projects\to-do-list\server\src\routes\todo.routes.js
 const express = require('express');
 const router = express.Router();
 const validate = require('../middleware/validate.middleware');
@@ -11,6 +10,11 @@ const {
   deleteTodo,
   toggleComplete
 } = require('../controllers/todo.controller');
+const {
+  addSubtask,
+  toggleSubtask,
+  deleteSubtask
+} = require('../controllers/subtask.controller');
 
 router.route('/')
   .get(getAllTodos)
@@ -22,5 +26,10 @@ router.route('/:id')
   .delete(deleteTodo);
 
 router.patch('/:id/complete', toggleComplete);
+
+// Subtask Routes
+router.post('/:id/subtasks', addSubtask);
+router.patch('/:id/subtasks/:subId', toggleSubtask);
+router.delete('/:id/subtasks/:subId', deleteSubtask);
 
 module.exports = router;

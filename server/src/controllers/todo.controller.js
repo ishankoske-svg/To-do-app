@@ -1,15 +1,68 @@
 // d:\projects\personal-projects\to-do-list\server\src\controllers\todo.controller.js
 const prisma = require('../config/db');
 
-// Hardcoded user ID for Phase 1
+// Hardcoded user ID for Phase 2 (replaced with real auth in Phase 4)
 const TEMP_USER_ID = "temp-user-123";
 
 const getAllTodos = async (req, res, next) => {
   try {
+    const { completed, priority, tag, search, sortBy, order } = req.query;
+
+    // ─── Build the WHERE clause ─────────────────────────────────────
+    // We start with just the userId, then add optional filters
+    const where = { userId: TEMP_USER_ID };
+
+    // ?completed=true or ?completed=false
+    if (completed !== undefined) {
+      where.completed = completed === 'true';
+    }
+
+    // ?priority=HIGH, MEDIUM, or LOW
+    if (priority) {
+      where.priority = priority.toUpperCase();
+    }
+
+    // ?tag=<tagId> — find todos that have this tag in their tags array
+    if (tag) {
+      where.tags = { some: { id: tag } };
+    }
+
+    // ?search=keyword — case-insensitive search in title OR description
+    // 'contains' with mode:'insensitive' means "anywhere in the string, ignore case"
+    if (search) {
+      where.OR = [
+        { title: { contains: search, mode: 'insensitive' } },
+        { description: { contains: search, mode: 'insensitive' } }
+      ];
+    }
+
+    // ─── Build the ORDER BY clause ───────────────────────────────────
+    // Default: newest first
+    const sortDirection = order === 'asc' ? 'asc' : 'desc';
+
+    let orderBy;
+    if (sortBy === 'dueDate') {
+      // Todos without a due date will appear last
+      orderBy = { dueDate: sortDirection };
+    } else if (sortBy === 'priority') {
+      // ⚠️ Prisma sorts enums alphabetically: HIGH → LOW → MEDIUM
+      // This is a known limitation — in Phase 4 we can use a raw query for perfect ordering.
+      // For now, HIGH comes first (asc) or MEDIUM comes first (desc).
+      orderBy = { priority: sortDirection };
+    } else {
+      // Default: sort by createdAt
+      orderBy = { createdAt: sortDirection };
+    }
+
     const todos = await prisma.todo.findMany({
-      where: { userId: TEMP_USER_ID },
-      orderBy: { createdAt: 'desc' }
+      where,
+      orderBy,
+      include: {
+        subtasks: { orderBy: { createdAt: 'asc' } },
+        tags: true
+      }
     });
+
     res.json({ success: true, data: todos });
   } catch (error) {
     next(error);
@@ -19,7 +72,11 @@ const getAllTodos = async (req, res, next) => {
 const getTodoById = async (req, res, next) => {
   try {
     const todo = await prisma.todo.findUnique({
-      where: { id: req.params.id }
+      where: { id: req.params.id },
+      include: {
+        subtasks: { orderBy: { createdAt: 'asc' } },
+        tags: true
+      }
     });
     if (!todo || todo.userId !== TEMP_USER_ID) {
       return res.status(404).json({ success: false, message: 'Todo not found' });
@@ -36,6 +93,10 @@ const createTodo = async (req, res, next) => {
       data: {
         ...req.body,
         userId: TEMP_USER_ID
+      },
+      include: {
+        subtasks: true,
+        tags: true
       }
     });
     res.status(201).json({ success: true, data: todo });
@@ -53,7 +114,13 @@ const updateTodo = async (req, res, next) => {
     if (todo.count === 0) {
       return res.status(404).json({ success: false, message: 'Todo not found' });
     }
-    const updatedTodo = await prisma.todo.findUnique({ where: { id: req.params.id } });
+    const updatedTodo = await prisma.todo.findUnique({ 
+      where: { id: req.params.id },
+      include: {
+        subtasks: { orderBy: { createdAt: 'asc' } },
+        tags: true
+      }
+    });
     res.json({ success: true, data: updatedTodo });
   } catch (error) {
     next(error);
@@ -83,7 +150,11 @@ const toggleComplete = async (req, res, next) => {
     
     const updatedTodo = await prisma.todo.update({
       where: { id: req.params.id },
-      data: { completed: !todo.completed }
+      data: { completed: !todo.completed },
+      include: {
+        subtasks: { orderBy: { createdAt: 'asc' } },
+        tags: true
+      }
     });
     
     res.json({ success: true, data: updatedTodo });

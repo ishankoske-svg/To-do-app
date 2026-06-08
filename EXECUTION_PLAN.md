@@ -158,25 +158,25 @@
 > **Estimated time:** 5–6 hours
 
 ### 2.1 — Backend Enhancements
-- [ ] Update `createTodoSchema` and `updateTodoSchema` to include `priority`, `dueDate`, `description`
-- [ ] Create `server/src/routes/subtask.routes.js` + controller handlers:
+- [x] Update `createTodoSchema` and `updateTodoSchema` to include `priority`, `dueDate`, `description`
+- [x] Create `server/src/routes/subtask.routes.js` + controller handlers:
   - `addSubtask` — POST `/api/todos/:id/subtasks`
   - `toggleSubtask` — PATCH `/api/todos/:id/subtasks/:subId`
   - `deleteSubtask` — DELETE `/api/todos/:id/subtasks/:subId`
-- [ ] Create `server/src/schemas/auth.schema.js` (prep for Phase 4)
-- [ ] Create tag routes + controller:
+- [x] Create `server/src/schemas/auth.schema.js` (prep for Phase 4)
+- [x] Create tag routes + controller:
   - `getTags`, `createTag`, `deleteTag`
-- [ ] 🧪 Test all new endpoints in Postman
+- [x] 🧪 Test all new endpoints in Postman
 
 ### 2.2 — Frontend Enhancements
-- [ ] Update `TodoForm.jsx` — add priority dropdown, due date picker, description textarea
-- [ ] Update `TodoItem.jsx` — show priority badge, due date, description
-- [ ] Create `client/src/components/common/Badge.jsx` — colored pill for priority/tags
-- [ ] Create subtask UI inside `TodoItem.jsx` or a modal
-- [ ] Create `client/src/utils/priorityHelpers.js` — maps priority → color/label
-- [ ] Create `client/src/utils/dateHelpers.js` — formats dates nicely
-- [ ] Update `todoStore.js` — add subtask and tag actions
-- [ ] 🧪 Test: create todo with priority + due date, add subtasks, add tag
+- [x] Update `TodoForm.jsx` — add priority dropdown, due date picker, description textarea
+- [x] Update `TodoItem.jsx` — show priority badge, due date, description
+- [x] Create `client/src/components/common/Badge.jsx` — colored pill for priority/tags
+- [x] Create subtask UI inside `TodoItem.jsx` or a modal
+- [x] Create `client/src/utils/priorityHelpers.js` — maps priority → color/label
+- [x] Create `client/src/utils/dateHelpers.js` — formats dates nicely
+- [x] Update `todoStore.js` — add subtask and tag actions
+- [x] 🧪 Test: create todo with priority + due date, add subtasks, add tag
 
 ---
 

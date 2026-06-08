@@ -1,16 +1,36 @@
 // d:\projects\personal-projects\to-do-list\client\src\store\todoStore.js
 import { create } from 'zustand';
 import * as todosApi from '../api/todos.api';
+import * as tagsApi from '../api/tags.api';
 
 export const useTodoStore = create((set, get) => ({
   todos: [],
   isLoading: false,
   error: null,
 
+  // ─── Filters ──────────────────────────────────────────────────────
+  // null means "not active" for that filter
+  filters: {
+    completed: null,
+    priority: null,
+    tag: null,
+    search: '',
+    sortBy: 'createdAt',
+    order: 'desc'
+  },
+
+  setFilter: (key, value) => {
+    set((state) => ({ filters: { ...state.filters, [key]: value } }));
+  },
+
+  resetFilters: () => {
+    set({ filters: { completed: null, priority: null, tag: null, search: '', sortBy: 'createdAt', order: 'desc' } });
+  },
+
   loadTodos: async () => {
     set({ isLoading: true, error: null });
     try {
-      const todos = await todosApi.fetchTodos();
+      const todos = await todosApi.fetchTodos(get().filters);
       set({ todos, isLoading: false });
     } catch (error) {
       set({ error: error.response?.data?.message || error.message, isLoading: false });
@@ -39,8 +59,83 @@ export const useTodoStore = create((set, get) => ({
     try {
       const updatedTodo = await todosApi.toggleComplete(id);
       set((state) => ({
-        todos: state.todos.map(t => (t.id === id ? updatedTodo : t))
+        todos: state.todos.map(t => (t.id === id ? { ...t, ...updatedTodo } : t))
       }));
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  // Subtasks
+  addSubtask: async (todoId, data) => {
+    try {
+      const newSubtask = await todosApi.addSubtask(todoId, data);
+      set((state) => ({
+        todos: state.todos.map(t => 
+          t.id === todoId ? { ...t, subtasks: [...(t.subtasks || []), newSubtask] } : t
+        )
+      }));
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  toggleSubtask: async (todoId, subId) => {
+    try {
+      const updatedSubtask = await todosApi.toggleSubtask(todoId, subId);
+      set((state) => ({
+        todos: state.todos.map(t => 
+          t.id === todoId ? {
+            ...t,
+            subtasks: t.subtasks.map(s => s.id === subId ? updatedSubtask : s)
+          } : t
+        )
+      }));
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  deleteSubtask: async (todoId, subId) => {
+    try {
+      await todosApi.deleteSubtask(todoId, subId);
+      set((state) => ({
+        todos: state.todos.map(t => 
+          t.id === todoId ? {
+            ...t,
+            subtasks: t.subtasks.filter(s => s.id !== subId)
+          } : t
+        )
+      }));
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  // Tags
+  tags: [],
+  loadTags: async () => {
+    try {
+      const tags = await tagsApi.fetchTags();
+      set({ tags });
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  addTag: async (data) => {
+    try {
+      const newTag = await tagsApi.createTag(data);
+      set((state) => ({ tags: [...state.tags, newTag] }));
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  removeTag: async (id) => {
+    try {
+      await tagsApi.deleteTag(id);
+      set((state) => ({ tags: state.tags.filter(t => t.id !== id) }));
     } catch (error) {
       console.error(error);
     }
