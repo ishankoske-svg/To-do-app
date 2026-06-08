@@ -1,13 +1,12 @@
 // d:\projects\personal-projects\to-do-list\server\src\controllers\tag.controller.js
 const prisma = require('../config/db');
 
-// Hardcoded user ID for Phase 2
-const TEMP_USER_ID = "temp-user-123";
+
 
 const getAllTags = async (req, res, next) => {
   try {
     const tags = await prisma.tag.findMany({
-      where: { userId: TEMP_USER_ID }
+      where: { userId: req.user.id }
     });
     res.json({ success: true, data: tags });
   } catch (error) {
@@ -27,7 +26,7 @@ const createTag = async (req, res, next) => {
       data: {
         name,
         color: color || '#6366f1',
-        userId: TEMP_USER_ID
+        userId: req.user.id
       }
     });
 
@@ -44,7 +43,7 @@ const deleteTag = async (req, res, next) => {
     const tag = await prisma.tag.deleteMany({
       where: {
         id,
-        userId: TEMP_USER_ID
+        userId: req.user.id
       }
     });
 

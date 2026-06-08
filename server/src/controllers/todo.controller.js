@@ -1,8 +1,6 @@
 // d:\projects\personal-projects\to-do-list\server\src\controllers\todo.controller.js
 const prisma = require('../config/db');
 
-// Hardcoded user ID for Phase 2 (replaced with real auth in Phase 4)
-const TEMP_USER_ID = "temp-user-123";
 
 const getAllTodos = async (req, res, next) => {
   try {
@@ -10,7 +8,7 @@ const getAllTodos = async (req, res, next) => {
 
     // ─── Build the WHERE clause ─────────────────────────────────────
     // We start with just the userId, then add optional filters
-    const where = { userId: TEMP_USER_ID };
+    const where = { userId: req.user.id };
 
     // ?completed=true or ?completed=false
     if (completed !== undefined) {
@@ -78,7 +76,7 @@ const getTodoById = async (req, res, next) => {
         tags: true
       }
     });
-    if (!todo || todo.userId !== TEMP_USER_ID) {
+    if (!todo || todo.userId !== req.user.id) {
       return res.status(404).json({ success: false, message: 'Todo not found' });
     }
     res.json({ success: true, data: todo });
@@ -92,7 +90,7 @@ const createTodo = async (req, res, next) => {
     const todo = await prisma.todo.create({
       data: {
         ...req.body,
-        userId: TEMP_USER_ID
+        userId: req.user.id
       },
       include: {
         subtasks: true,
@@ -108,7 +106,7 @@ const createTodo = async (req, res, next) => {
 const updateTodo = async (req, res, next) => {
   try {
     const todo = await prisma.todo.updateMany({
-      where: { id: req.params.id, userId: TEMP_USER_ID },
+      where: { id: req.params.id, userId: req.user.id },
       data: req.body
     });
     if (todo.count === 0) {
@@ -130,7 +128,7 @@ const updateTodo = async (req, res, next) => {
 const deleteTodo = async (req, res, next) => {
   try {
     const todo = await prisma.todo.deleteMany({
-      where: { id: req.params.id, userId: TEMP_USER_ID }
+      where: { id: req.params.id, userId: req.user.id }
     });
     if (todo.count === 0) {
       return res.status(404).json({ success: false, message: 'Todo not found' });
@@ -144,7 +142,7 @@ const deleteTodo = async (req, res, next) => {
 const toggleComplete = async (req, res, next) => {
   try {
     const todo = await prisma.todo.findUnique({ where: { id: req.params.id } });
-    if (!todo || todo.userId !== TEMP_USER_ID) {
+    if (!todo || todo.userId !== req.user.id) {
       return res.status(404).json({ success: false, message: 'Todo not found' });
     }
     

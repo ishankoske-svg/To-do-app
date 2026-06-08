@@ -185,32 +185,32 @@
 > **Estimated time:** 4–5 hours
 
 ### 3.1 — Backend Filtering
-- [ ] Update `getAllTodos` controller to accept query params:
+- [x] Update `getAllTodos` controller to accept query params:
   - `?completed=true/false`
   - `?priority=HIGH/MEDIUM/LOW`
   - `?tag=tagId`
   - `?search=keyword` (search title + description)
   - `?sortBy=dueDate|priority|createdAt&order=asc|desc`
-- [ ] Use Prisma `where` and `orderBy` to implement filtering
-- [ ] 🧪 Test each filter combination in Postman
+- [x] Use Prisma `where` and `orderBy` to implement filtering
+- [x] 🧪 Test each filter combination in Postman
 
 ### 3.2 — Frontend Filtering
-- [ ] Create `client/src/components/todos/TodoFilters.jsx`:
+- [x] Create `client/src/components/todos/TodoFilters.jsx`:
   - Tabs: All / Active / Completed
   - Dropdown: Filter by priority
   - Dropdown: Filter by tag
   - Search input (debounced)
   - Sort dropdown
-- [ ] Create `client/src/components/todos/TodoStats.jsx` — "3 of 7 completed"
-- [ ] Update `todoStore.js` — store active filters, pass to API call
-- [ ] Wire filters into `DashboardPage.jsx`
-- [ ] 🧪 Test: filters update the visible list correctly
+- [x] Create `client/src/components/todos/TodoStats.jsx` — "3 of 7 completed"
+- [x] Update `todoStore.js` — store active filters, pass to API call
+- [x] Wire filters into `DashboardPage.jsx`
+- [x] 🧪 Test: filters update the visible list correctly
 
 ### 3.3 — UX Polish (No Auth Yet)
-- [ ] Create `client/src/components/layout/Navbar.jsx` — app title + placeholder avatar
-- [ ] Create `client/src/components/layout/PageWrapper.jsx` — consistent page padding
-- [ ] Ensure `EmptyState.jsx` shows for each filter state
-- [ ] Add loading spinner while todos are fetching
+- [x] Create `client/src/components/layout/Navbar.jsx` — app title + placeholder avatar
+- [x] Create `client/src/components/layout/PageWrapper.jsx` — consistent page padding
+- [x] Ensure `EmptyState.jsx` shows for each filter state
+- [x] Add loading spinner while todos are fetching
 
 ---
 

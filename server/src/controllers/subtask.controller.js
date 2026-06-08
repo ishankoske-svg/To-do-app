@@ -1,8 +1,7 @@
 // d:\projects\personal-projects\to-do-list\server\src\controllers\subtask.controller.js
 const prisma = require('../config/db');
 
-// Hardcoded user ID for Phase 2
-const TEMP_USER_ID = "temp-user-123";
+
 
 const addSubtask = async (req, res, next) => {
   try {
@@ -18,7 +17,7 @@ const addSubtask = async (req, res, next) => {
       where: { id: todoId }
     });
 
-    if (!todo || todo.userId !== TEMP_USER_ID) {
+    if (!todo || todo.userId !== req.user.id) {
       return res.status(404).json({ success: false, message: 'Todo not found' });
     }
 
@@ -45,7 +44,7 @@ const toggleSubtask = async (req, res, next) => {
       include: { todo: true }
     });
 
-    if (!subtask || subtask.todo.userId !== TEMP_USER_ID) {
+    if (!subtask || subtask.todo.userId !== req.user.id) {
       return res.status(404).json({ success: false, message: 'Subtask not found' });
     }
 
@@ -69,7 +68,7 @@ const deleteSubtask = async (req, res, next) => {
       include: { todo: true }
     });
 
-    if (!subtask || subtask.todo.userId !== TEMP_USER_ID) {
+    if (!subtask || subtask.todo.userId !== req.user.id) {
       return res.status(404).json({ success: false, message: 'Subtask not found' });
     }
 

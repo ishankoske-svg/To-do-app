@@ -1,9 +1,5 @@
 // d:\projects\personal-projects\to-do-list\client\src\api\todos.api.js
-import axios from 'axios';
-
-const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL + '/api/todos',
-});
+import api from './axios';
 
 // Build query string from filters object, skipping null/empty values
 export const fetchTodos = (filters = {}) => {
@@ -15,14 +11,14 @@ export const fetchTodos = (filters = {}) => {
   if (filters.sortBy) params.append('sortBy', filters.sortBy);
   if (filters.order) params.append('order', filters.order);
   const queryString = params.toString();
-  return api.get(queryString ? `/?${queryString}` : '/').then(res => res.data.data);
+  return api.get(queryString ? `/todos?${queryString}` : '/todos').then(res => res.data.data);
 };
-export const createTodo = (data) => api.post('/', data).then(res => res.data.data);
-export const updateTodo = (id, data) => api.put(`/${id}`, data).then(res => res.data.data);
-export const deleteTodo = (id) => api.delete(`/${id}`).then(res => res.data);
-export const toggleComplete = (id) => api.patch(`/${id}/complete`).then(res => res.data.data);
+export const createTodo = (data) => api.post('/todos', data).then(res => res.data.data);
+export const updateTodo = (id, data) => api.put(`/todos/${id}`, data).then(res => res.data.data);
+export const deleteTodo = (id) => api.delete(`/todos/${id}`).then(res => res.data);
+export const toggleComplete = (id) => api.patch(`/todos/${id}/complete`).then(res => res.data.data);
 
 // Subtasks
-export const addSubtask = (todoId, data) => api.post(`/${todoId}/subtasks`, data).then(res => res.data.data);
-export const toggleSubtask = (todoId, subId) => api.patch(`/${todoId}/subtasks/${subId}`).then(res => res.data.data);
-export const deleteSubtask = (todoId, subId) => api.delete(`/${todoId}/subtasks/${subId}`).then(res => res.data);
+export const addSubtask = (todoId, data) => api.post(`/todos/${todoId}/subtasks`, data).then(res => res.data.data);
+export const toggleSubtask = (todoId, subId) => api.patch(`/todos/${todoId}/subtasks/${subId}`).then(res => res.data.data);
+export const deleteSubtask = (todoId, subId) => api.delete(`/todos/${todoId}/subtasks/${subId}`).then(res => res.data);

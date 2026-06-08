@@ -1,9 +1,13 @@
+// d:\projects\personal-projects\to-do-list\server\src\app.js
 const express = require('express');
 const cors = require('cors');
 
 const errorHandler = require('./middleware/error.middleware');
+const authMiddleware = require('./middleware/auth.middleware');
 
+const authRoutes = require('./routes/auth.routes');
 const todoRoutes = require('./routes/todo.routes');
+const tagRoutes = require('./routes/tag.routes');
 
 const app = express();
 
@@ -14,10 +18,15 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
-app.use('/api/todos', todoRoutes);
-app.use('/api/tags', require('./routes/tag.routes'));
+app.use('/api/auth', authRoutes);
+
+// Protected routes — require valid JWT
+app.use('/api/todos', authMiddleware, todoRoutes);
+app.use('/api/tags', authMiddleware, tagRoutes);
 
 // Error handling middleware MUST be added after all routes
 app.use(errorHandler);
 
 module.exports = app;
+
+// ✅ DONE
