@@ -1,10 +1,16 @@
 // d:\projects\personal-projects\to-do-list\client\src\components\todos\TodoFilters.jsx
 // This component holds all the filter controls. Each control calls setFilter() in the store,
 // which triggers a re-fetch via useEffect in DashboardPage.
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, forwardRef, useRef, useImperativeHandle } from 'react';
 import { useTodoStore } from '../../store/todoStore';
 
-const TodoFilters = () => {
+const TodoFilters = forwardRef((props, ref) => {
+  const searchRef = useRef(null);
+
+  // Expose a .focusSearch() method to parent via ref
+  useImperativeHandle(ref, () => ({
+    focusSearch: () => searchRef.current?.focus()
+  }));
   const filters = useTodoStore(state => state.filters);
   const setFilter = useTodoStore(state => state.setFilter);
   const resetFilters = useTodoStore(state => state.resetFilters);
@@ -34,10 +40,10 @@ const TodoFilters = () => {
   };
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 mt-4 space-y-4">
+    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-4 mt-4 space-y-4">
       
       {/* Completion Tabs */}
-      <div className="flex border border-gray-200 rounded-lg overflow-hidden text-sm font-medium">
+      <div className="flex border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden text-sm font-medium">
         {[
           { label: 'All', value: null },
           { label: 'Active', value: false },
@@ -49,7 +55,7 @@ const TodoFilters = () => {
             className={`flex-1 py-2 transition-colors ${
               filters.completed === tab.value
                 ? 'bg-indigo-600 text-white'
-                : 'text-gray-600 hover:bg-gray-50'
+                : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50'
             }`}
           >
             {tab.label}
@@ -62,7 +68,7 @@ const TodoFilters = () => {
         <select
           value={filters.priority || ''}
           onChange={(e) => setFilter('priority', e.target.value || null)}
-          className="px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
         >
           <option value="">All Priorities</option>
           <option value="HIGH">High</option>
@@ -73,7 +79,7 @@ const TodoFilters = () => {
         <select
           value={filters.tag || ''}
           onChange={(e) => setFilter('tag', e.target.value || null)}
-          className="px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
         >
           <option value="">All Tags</option>
           {tags.map(tag => (
@@ -88,7 +94,7 @@ const TodoFilters = () => {
             setFilter('sortBy', sortBy);
             setFilter('order', order);
           }}
-          className="px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
         >
           <option value="createdAt_desc">Newest First</option>
           <option value="createdAt_asc">Oldest First</option>
@@ -97,17 +103,18 @@ const TodoFilters = () => {
         </select>
 
         <input
+          ref={searchRef}
           type="text"
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
-          placeholder="Search tasks..."
-          className="flex-1 min-w-[150px] px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          placeholder="Search tasks... (press /)"
+          className="flex-1 min-w-[150px] px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 dark:bg-gray-700 text-sm text-gray-700 dark:text-gray-200 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
         />
 
         {hasActiveFilters && (
           <button
             onClick={handleReset}
-            className="px-4 py-2 text-sm text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg font-medium transition-colors border border-red-200"
+            className="px-4 py-2 text-sm text-red-500 hover:text-red-700 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg font-medium transition-colors border border-red-200 dark:border-red-800/30"
           >
             Clear Filters
           </button>
@@ -115,7 +122,7 @@ const TodoFilters = () => {
       </div>
     </div>
   );
-};
+});
 
 export default TodoFilters;
 

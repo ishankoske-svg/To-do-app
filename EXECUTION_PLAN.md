@@ -219,35 +219,35 @@
 > **Estimated time:** 5–6 hours
 
 ### 4.1 — Backend Auth
-- [ ] Install: `npm install bcryptjs jsonwebtoken`
-- [ ] Create `server/src/controllers/auth.controller.js`:
+- [x] Install: `npm install bcryptjs jsonwebtoken`
+- [x] Create `server/src/controllers/auth.controller.js`:
   - `signup` — hash password, create user, return JWT
   - `login` — verify password, return JWT
   - `getMe` — return current user from token
-- [ ] Create `server/src/schemas/auth.schema.js`:
+- [x] Create `server/src/schemas/auth.schema.js`:
   - `signupSchema` — email, password (min 8 chars), optional name
   - `loginSchema` — email, password
-- [ ] Create `server/src/routes/auth.routes.js`
-- [ ] Create `server/src/middleware/auth.middleware.js`:
+- [x] Create `server/src/routes/auth.routes.js`
+- [x] Create `server/src/middleware/auth.middleware.js`:
   - Reads `Authorization: Bearer <token>` header
   - Verifies JWT, attaches `req.user` to request
-- [ ] 🟡 Protect all `/api/todos` and `/api/tags` routes with auth middleware
-- [ ] 🟡 Replace hardcoded `userId` in todo controllers with `req.user.id`
-- [ ] 🧪 Test: signup → login → get token → use token to access todos
+- [x] 🟡 Protect all `/api/todos` and `/api/tags` routes with auth middleware
+- [x] 🟡 Replace hardcoded `userId` in todo controllers with `req.user.id`
+- [x] 🧪 Test: signup → login → get token → use token to access todos
 
 ### 4.2 — Frontend Auth
-- [ ] Create `client/src/store/authStore.js`:
+- [x] Create `client/src/store/authStore.js`:
   - State: `user`, `token`, `isAuthenticated`
   - Actions: `login`, `logout`, `signup`, `loadUser`
-- [ ] Create `client/src/api/auth.api.js`
-- [ ] Create `client/src/hooks/useAuth.js`
-- [ ] Create `client/src/pages/LoginPage.jsx`
-- [ ] Create `client/src/pages/SignupPage.jsx`
-- [ ] Update Axios instance — attach JWT token from store to every request header
-- [ ] Create Protected Route wrapper in `App.jsx` — redirects to `/login` if not authenticated
-- [ ] Update `Navbar.jsx` — show user name + logout button
-- [ ] Persist token to `localStorage` — survive page refresh
-- [ ] 🧪 Test: sign up → log in → see todos → log out → redirected to login
+- [x] Create `client/src/api/auth.api.js`
+- [x] Create `client/src/hooks/useAuth.js`
+- [x] Create `client/src/pages/LoginPage.jsx`
+- [x] Create `client/src/pages/SignupPage.jsx`
+- [x] Update Axios instance — attach JWT token from store to every request header
+- [x] Create Protected Route wrapper in `App.jsx` — redirects to `/login` if not authenticated
+- [x] Update `Navbar.jsx` — show user name + logout button
+- [x] Persist token to `localStorage` — survive page refresh
+- [x] 🧪 Test: sign up → log in → see todos → log out → redirected to login
 
 ---
 
@@ -256,33 +256,35 @@
 > **Estimated time:** 4–5 hours
 
 ### 5.1 — Dark Mode
-- [ ] Create `client/src/hooks/useDarkMode.js` — toggle + persist to localStorage
-- [ ] Configure Tailwind `darkMode: 'class'` in `tailwind.config.js`
-- [ ] Add dark mode classes to all components
-- [ ] Add toggle button in `Navbar.jsx`
-- [ ] 🧪 Test: toggle persists across refresh
+- [x] Create `client/src/hooks/useDarkMode.js` — toggle + persist to localStorage
+- [x] Configure Tailwind `darkMode: 'class'` in `tailwind.config.js`
+- [x] Add dark mode classes to all components
+- [x] Add toggle button in `Navbar.jsx`
+- [x] 🧪 Test: toggle persists across refresh
 
 ### 5.2 — Drag & Drop Reordering
-- [ ] Install: `npm install @dnd-kit/core @dnd-kit/sortable`
-- [ ] Wrap `TodoList.jsx` with DnD context
-- [ ] On drop: call `PATCH /api/todos/reorder` with new order array
-- [ ] Implement `reorderTodos` in backend controller
-- [ ] 🧪 Test: drag a todo, refresh — new order is saved
+- [x] Install: `npm install @dnd-kit/core @dnd-kit/sortable`
+- [x] Wrap `TodoList.jsx` with DnD context
+- [x] On drop: call `PATCH /api/todos/reorder` with new order array
+- [x] Implement `reorderTodos` in backend controller
+- [x] 🧪 Test: drag a todo, refresh — new order is saved
 
 ### 5.3 — Animations & Micro-interactions
-- [ ] Install: `npm install framer-motion`
-- [ ] Animate todo items on add/delete (`AnimatePresence`)
-- [ ] Add completion animation (strikethrough transition)
-- [ ] Add confetti when all todos are completed 🎉
+- [x] Install: `npm install framer-motion`
+- [x] Animate todo items on add/delete (`AnimatePresence`)
+- [x] Add completion animation (strikethrough transition)
+- [x] Add confetti when all todos are completed 🎉
   ```bash
   npm install canvas-confetti
   ```
 
 ### 5.4 — Keyboard Shortcuts & UX
-- [ ] `Enter` to submit todo form
-- [ ] `Escape` to cancel editing
-- [ ] Undo delete — snackbar with 5-second timer
-- [ ] Responsive mobile layout — test on 375px viewport
+- [x] `Enter` to submit todo form
+- [x] `Escape` to cancel editing
+- [x] Undo delete — snackbar with 5-second timer
+- [x] Responsive mobile layout — test on 375px viewport
+- [x] Keyboard shortcuts: Ctrl+N (new task), / (search), Ctrl+D (dark mode)
+
 
 ---
 

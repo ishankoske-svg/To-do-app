@@ -9,7 +9,7 @@ const Spinner = ({ size = 'md' }) => {
   return (
     <div className="flex items-center justify-center py-10">
       <div
-        className={`${sizeClass} border-indigo-200 border-t-indigo-600 rounded-full animate-spin`}
+        className={`${sizeClass} border-indigo-200 dark:border-indigo-900/30 border-t-indigo-600 dark:border-t-indigo-400 rounded-full animate-spin`}
       />
     </div>
   );

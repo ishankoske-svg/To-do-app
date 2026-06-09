@@ -161,11 +161,35 @@ const toggleComplete = async (req, res, next) => {
   }
 };
 
+const reorderTodos = async (req, res, next) => {
+  try {
+    const { orderedIds } = req.body;
+    if (!orderedIds || !Array.isArray(orderedIds)) {
+      return res.status(400).json({ success: false, message: 'Invalid orderedIds array' });
+    }
+
+    // Promise.all runs all these updates in parallel, which is much faster than awaiting each one sequentially
+    await Promise.all(
+      orderedIds.map((id, index) =>
+        prisma.todo.updateMany({
+          where: { id, userId: req.user.id },
+          data: { order: index }
+        })
+      )
+    );
+
+    res.json({ success: true, message: 'Reordered successfully' });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllTodos,
   getTodoById,
   createTodo,
   updateTodo,
   deleteTodo,
-  toggleComplete
+  toggleComplete,
+  reorderTodos
 };

@@ -17,6 +17,7 @@ export const createTodo = (data) => api.post('/todos', data).then(res => res.dat
 export const updateTodo = (id, data) => api.put(`/todos/${id}`, data).then(res => res.data.data);
 export const deleteTodo = (id) => api.delete(`/todos/${id}`).then(res => res.data);
 export const toggleComplete = (id) => api.patch(`/todos/${id}/complete`).then(res => res.data.data);
+export const reorderTodosApi = (orderedIds) => api.patch(`/todos/reorder`, { orderedIds }).then(res => res.data);
 
 // Subtasks
 export const addSubtask = (todoId, data) => api.post(`/todos/${todoId}/subtasks`, data).then(res => res.data.data);

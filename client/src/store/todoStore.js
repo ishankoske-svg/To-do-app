@@ -46,12 +46,32 @@ export const useTodoStore = create((set, get) => ({
     }
   },
 
+  // Returns the deleted todo so the UI can cache it for undo
   removeTodo: async (id) => {
+    const todoToDelete = get().todos.find(t => t.id === id);
     try {
       await todosApi.deleteTodo(id);
       set((state) => ({ todos: state.todos.filter(t => t.id !== id) }));
+      return todoToDelete; // Return the cached copy for undo
     } catch (error) {
       console.error(error);
+      return null;
+    }
+  },
+
+  // Undo a delete by re-creating the todo via the API
+  undoDelete: async (cachedTodo) => {
+    if (!cachedTodo) return;
+    try {
+      const restored = await todosApi.createTodo({
+        title: cachedTodo.title,
+        description: cachedTodo.description || undefined,
+        priority: cachedTodo.priority,
+        dueDate: cachedTodo.dueDate || undefined,
+      });
+      set((state) => ({ todos: [restored, ...state.todos] }));
+    } catch (error) {
+      console.error('Undo failed:', error);
     }
   },
 
@@ -63,6 +83,23 @@ export const useTodoStore = create((set, get) => ({
       }));
     } catch (error) {
       console.error(error);
+    }
+  },
+
+  reorderTodos: async (orderedIds) => {
+    // Optimistic UI update
+    const currentTodos = [...get().todos];
+    const newTodos = [...currentTodos].sort((a, b) => {
+      return orderedIds.indexOf(a.id) - orderedIds.indexOf(b.id);
+    });
+    
+    set({ todos: newTodos });
+    
+    try {
+      await todosApi.reorderTodosApi(orderedIds);
+    } catch (error) {
+      console.error(error);
+      set({ todos: currentTodos }); // Revert on error
     }
   },
 

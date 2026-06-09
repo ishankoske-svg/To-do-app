@@ -16,15 +16,15 @@ const TodoStats = () => {
   return (
     <div className="mt-4 mb-2 px-1">
       <div className="flex justify-between items-center mb-1.5">
-        <span className="text-sm text-gray-500">
-          <span className="font-semibold text-indigo-600">{completed}</span> of{' '}
-          <span className="font-semibold text-gray-800">{total}</span> tasks completed
+        <span className="text-sm text-gray-500 dark:text-gray-400">
+          <span className="font-semibold text-indigo-600 dark:text-indigo-400">{completed}</span> of{' '}
+          <span className="font-semibold text-gray-800 dark:text-gray-200">{total}</span> tasks completed
         </span>
-        <span className="text-sm font-medium text-gray-400">{percentage}%</span>
+        <span className="text-sm font-medium text-gray-400 dark:text-gray-500">{percentage}%</span>
       </div>
 
       {/* The "progress bar" is a gray container with an inner div that has a dynamic width */}
-      <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+      <div className="h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
         <div
           className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full transition-all duration-500"
           style={{ width: `${percentage}%` }}

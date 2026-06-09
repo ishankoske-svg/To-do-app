@@ -8,7 +8,8 @@ const {
   getTodoById,
   updateTodo,
   deleteTodo,
-  toggleComplete
+  toggleComplete,
+  reorderTodos
 } = require('../controllers/todo.controller');
 const {
   addSubtask,
@@ -19,6 +20,9 @@ const {
 router.route('/')
   .get(getAllTodos)
   .post(validate(createTodoSchema), createTodo);
+
+// ⚠️ MUST BE BEFORE /:id because otherwise "reorder" is treated as an ID
+router.patch('/reorder', reorderTodos);
 
 router.route('/:id')
   .get(getTodoById)
