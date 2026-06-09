@@ -1,20 +1,24 @@
-// d:\projects\personal-projects\to-do-list\client\src\pages\DashboardPage.jsx
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useTodoStore } from '../store/todoStore';
 import TodoForm from '../components/todos/TodoForm';
 import TodoList from '../components/todos/TodoList';
 import TodoFilters from '../components/todos/TodoFilters';
-import TodoStats from '../components/todos/TodoStats';
 import PageWrapper from '../components/layout/PageWrapper';
+import NotificationBanner from '../components/common/NotificationBanner';
 import UndoSnackbar from '../components/common/UndoSnackbar';
+import CollaboratorModal from '../components/common/CollaboratorModal';
+import TodoStats from '../components/todos/TodoStats';
 import { useConfetti } from '../hooks/useConfetti';
 import { useDarkMode } from '../hooks/useDarkMode';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
+import { useNotifications } from '../hooks/useNotifications';
 
 const DashboardPage = () => {
   const loadTodos = useTodoStore(state => state.loadTodos);
   const loadTags = useTodoStore(state => state.loadTags);
+  const initSocket = useTodoStore(state => state.initSocket);
   const filters = useTodoStore(state => state.filters);
+  const todos = useTodoStore(state => state.todos);
   const error = useTodoStore(state => state.error);
   const undoDelete = useTodoStore(state => state.undoDelete);
 
@@ -24,12 +28,18 @@ const DashboardPage = () => {
 
   // Undo snackbar state
   const [deletedTodo, setDeletedTodo] = useState(null);
+  
+  // Collaborator modal state
+  const [showCollabModal, setShowCollabModal] = useState(false);
 
   // Dark mode (needed for keyboard shortcut Ctrl+D)
   const [, toggleDarkMode] = useDarkMode();
 
   // 🎉 Confetti when all tasks are completed
   useConfetti();
+
+  // 🔔 Push notifications
+  const { permission, requestPermission, scheduleNotification, cancelNotification } = useNotifications();
 
   // ⌨️ Keyboard shortcuts
   useKeyboardShortcuts({
@@ -38,8 +48,9 @@ const DashboardPage = () => {
     onFocusSearch: () => filtersRef.current?.focusSearch(),
   });
 
-  // Load tags once on mount (they don't change with filters)
+  // Init socket and load tags once on mount
   useEffect(() => {
+    initSocket();
     loadTags();
   }, []);
 
@@ -48,19 +59,39 @@ const DashboardPage = () => {
     loadTodos();
   }, [filters]);
 
+  // Schedule or cancel notifications when todos change
+  useEffect(() => {
+    todos.forEach(todo => {
+      if (todo.completed) {
+        cancelNotification(todo.id);
+      } else if (todo.dueDate) {
+        scheduleNotification(todo);
+      }
+    });
+  }, [todos, scheduleNotification, cancelNotification]);
+
   // Handle undo
   const handleUndo = useCallback(async (todo) => {
     await undoDelete(todo);
     setDeletedTodo(null);
   }, [undoDelete]);
 
+  // Cancel notification on delete wrapper
+  const handleDeletedTodo = useCallback((todo) => {
+    cancelNotification(todo.id);
+    setDeletedTodo(todo);
+  }, [cancelNotification]);
+
   return (
     <PageWrapper>
-      <div className="text-center mt-8 mb-6">
+      <NotificationBanner permission={permission} onRequestPermission={requestPermission} />
+      
+      <div className="text-center mt-8 mb-6 relative">
         <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 tracking-tight">
           My Tasks
         </h1>
         <p className="text-gray-500 dark:text-gray-400 mt-2">Stay organized, get things done.</p>
+        
         {/* Keyboard shortcut hints */}
         <p className="text-xs text-gray-400 dark:text-gray-600 mt-1">
           <kbd className="px-1 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-[10px] font-mono">Ctrl+N</kbd> new task
@@ -69,6 +100,14 @@ const DashboardPage = () => {
           {' · '}
           <kbd className="px-1 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-[10px] font-mono">Ctrl+D</kbd> dark mode
         </p>
+
+        {/* Share Button */}
+        <button 
+          onClick={() => setShowCollabModal(true)}
+          className="absolute right-0 top-0 px-3 py-1.5 bg-white dark:bg-gray-800 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800 rounded-full text-sm font-medium hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors shadow-sm flex items-center gap-2"
+        >
+          <span>👥</span> Share
+        </button>
       </div>
 
       {error && (
@@ -80,7 +119,7 @@ const DashboardPage = () => {
       <TodoForm ref={todoFormRef} />
       <TodoFilters ref={filtersRef} />
       <TodoStats />
-      <TodoList onDeletedTodo={setDeletedTodo} />
+      <TodoList onDeletedTodo={handleDeletedTodo} />
 
       {/* Undo snackbar — appears at the bottom after a delete */}
       <UndoSnackbar
@@ -88,6 +127,8 @@ const DashboardPage = () => {
         onUndo={handleUndo}
         onDismiss={() => setDeletedTodo(null)}
       />
+
+      {showCollabModal && <CollaboratorModal onClose={() => setShowCollabModal(false)} />}
     </PageWrapper>
   );
 };

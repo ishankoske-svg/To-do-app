@@ -9,7 +9,8 @@ const {
   updateTodo,
   deleteTodo,
   toggleComplete,
-  reorderTodos
+  reorderTodos,
+  getTodoStats
 } = require('../controllers/todo.controller');
 const {
   addSubtask,
@@ -21,8 +22,9 @@ router.route('/')
   .get(getAllTodos)
   .post(validate(createTodoSchema), createTodo);
 
-// ⚠️ MUST BE BEFORE /:id because otherwise "reorder" is treated as an ID
+// ⚠️ MUST BE BEFORE /:id because otherwise "reorder" and "stats" are treated as an ID
 router.patch('/reorder', reorderTodos);
+router.get('/stats', getTodoStats);
 
 router.route('/:id')
   .get(getTodoById)
@@ -31,9 +33,16 @@ router.route('/:id')
 
 router.patch('/:id/complete', toggleComplete);
 
+const attachmentRoutes = require('./attachment.routes');
+
 // Subtask Routes
 router.post('/:id/subtasks', addSubtask);
 router.patch('/:id/subtasks/:subId', toggleSubtask);
 router.delete('/:id/subtasks/:subId', deleteSubtask);
 
+// Attachment Routes
+router.use('/:id/attachments', attachmentRoutes);
+
 module.exports = router;
+
+// ✅ DONE

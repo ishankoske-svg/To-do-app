@@ -23,3 +23,19 @@ export const reorderTodosApi = (orderedIds) => api.patch(`/todos/reorder`, { ord
 export const addSubtask = (todoId, data) => api.post(`/todos/${todoId}/subtasks`, data).then(res => res.data.data);
 export const toggleSubtask = (todoId, subId) => api.patch(`/todos/${todoId}/subtasks/${subId}`).then(res => res.data.data);
 export const deleteSubtask = (todoId, subId) => api.delete(`/todos/${todoId}/subtasks/${subId}`).then(res => res.data);
+
+// Stats
+export const getTodoStatsApi = () => api.get('/todos/stats').then(res => res.data.data);
+
+// Attachments
+export const uploadAttachment = (todoId, file) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  return api.post(`/todos/${todoId}/attachments`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }).then(res => res.data.data);
+};
+export const getAttachments = (todoId) => api.get(`/todos/${todoId}/attachments`).then(res => res.data.data);
+export const deleteAttachment = (todoId, attachId) => api.delete(`/todos/${todoId}/attachments/${attachId}`).then(res => res.data);
+
+// ✅ DONE

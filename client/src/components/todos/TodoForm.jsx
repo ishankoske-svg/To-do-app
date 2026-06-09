@@ -7,6 +7,7 @@ const TodoForm = forwardRef((props, ref) => {
   const [description, setDescription] = useState('');
   const [priority, setPriority] = useState('MEDIUM');
   const [dueDate, setDueDate] = useState('');
+  const [recurring, setRecurring] = useState('NONE');
   const [isExpanded, setIsExpanded] = useState(false);
   
   const addTodo = useTodoStore(state => state.addTodo);
@@ -28,6 +29,7 @@ const TodoForm = forwardRef((props, ref) => {
       title,
       description: description.trim() || undefined,
       priority,
+      recurring: dueDate ? recurring : 'NONE', // only allow recurring if there's a due date
       dueDate: dueDate ? new Date(dueDate).toISOString() : undefined
     });
     
@@ -36,6 +38,7 @@ const TodoForm = forwardRef((props, ref) => {
     setDescription('');
     setPriority('MEDIUM');
     setDueDate('');
+    setRecurring('NONE');
     setIsExpanded(false);
   };
 
@@ -73,7 +76,7 @@ const TodoForm = forwardRef((props, ref) => {
           />
           
           <div className="flex flex-wrap gap-3 items-center justify-between">
-            <div className="flex gap-3">
+            <div className="flex flex-wrap gap-3">
               <select
                 value={priority}
                 onChange={(e) => setPriority(e.target.value)}
@@ -90,6 +93,19 @@ const TodoForm = forwardRef((props, ref) => {
                 onChange={(e) => setDueDate(e.target.value)}
                 className="px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-600 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm text-gray-700 dark:text-gray-200"
               />
+
+              {dueDate && (
+                <select
+                  value={recurring}
+                  onChange={(e) => setRecurring(e.target.value)}
+                  className="px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white dark:bg-gray-700 text-sm text-gray-700 dark:text-gray-200"
+                >
+                  <option value="NONE">Does not repeat</option>
+                  <option value="DAILY">Daily</option>
+                  <option value="WEEKLY">Weekly</option>
+                  <option value="MONTHLY">Monthly</option>
+                </select>
+              )}
             </div>
             
             <div className="flex gap-2">

@@ -1,10 +1,12 @@
 // d:\projects\personal-projects\to-do-list\client\src\components\layout\Navbar.jsx
 // Sticky navigation bar showing user initials and logout
 import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import { useDarkMode } from '../../hooks/useDarkMode';
 
 const Navbar = () => {
+  const location = useLocation();
   const user = useAuthStore(state => state.user);
   const logout = useAuthStore(state => state.logout);
   const [isDark, toggleDarkMode] = useDarkMode();
@@ -19,9 +21,18 @@ const Navbar = () => {
       <div className="max-w-3xl mx-auto px-4 h-14 flex items-center justify-between">
         
         <div className="flex items-center gap-4">
-          <span className="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400">
+          <Link to="/" className="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400">
             TodoFlow
-          </span>
+          </Link>
+
+          {user && (
+            <Link 
+              to="/stats"
+              className={`text-sm font-medium transition-colors ${location.pathname === '/stats' ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100'}`}
+            >
+              Stats
+            </Link>
+          )}
 
           <button 
             onClick={toggleDarkMode}

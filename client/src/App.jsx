@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import DashboardPage from './pages/DashboardPage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
+import StatsPage from './pages/StatsPage';
 import Navbar from './components/layout/Navbar';
 import ProtectedRoute from './components/layout/ProtectedRoute';
 import { useAuthStore } from './store/authStore';
@@ -27,6 +28,12 @@ function App() {
           <Route path="/" element={
             <ProtectedRoute>
               <DashboardPage />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/stats" element={
+            <ProtectedRoute>
+              <StatsPage />
             </ProtectedRoute>
           } />
         </Routes>

@@ -1,9 +1,9 @@
-// d:\projects\personal-projects\to-do-list\client\src\components\todos\TodoItem.jsx
 import React, { useState } from 'react';
 import { useTodoStore } from '../../store/todoStore';
 import { getPriorityDetails } from '../../utils/priorityHelpers';
 import { formatDate } from '../../utils/dateHelpers';
 import Badge from '../common/Badge';
+import AttachmentUploader from './AttachmentUploader';
 
 import { motion } from 'framer-motion';
 
@@ -52,18 +52,36 @@ const TodoItem = ({ todo, dragHandleProps, onDeletedTodo }) => {
           />
           <div className="flex flex-col">
             <div className="flex items-center gap-3">
-              <span 
-                className={`text-lg transition-all duration-300 cursor-pointer ${todo.completed ? 'line-through text-gray-400 dark:text-gray-500 opacity-50' : 'text-gray-800 dark:text-gray-100'}`}
-                onClick={() => setIsExpanded(!isExpanded)}
-              >
-                {todo.title}
-              </span>
+              <div className="flex items-center gap-2">
+                <span 
+                  className={`text-lg transition-all duration-300 cursor-pointer ${todo.completed ? 'line-through text-gray-400 dark:text-gray-500 opacity-50' : 'text-gray-800 dark:text-gray-100'}`}
+                  onClick={() => setIsExpanded(!isExpanded)}
+                >
+                  {todo.title}
+                </span>
+                {todo.recurring && todo.recurring !== 'NONE' && (
+                  <span className="text-sm" title={`Repeats ${todo.recurring.toLowerCase()}`}>🔁</span>
+                )}
+              </div>
               
               <Badge className={priorityDetails.colorClass}>{priorityDetails.label}</Badge>
               
               {todo.dueDate && (
                 <Badge className="bg-purple-100 text-purple-700 border-purple-200 dark:bg-purple-900/30 dark:text-purple-300 dark:border-purple-800/30">
                   Due {formatDate(todo.dueDate)}
+                </Badge>
+              )}
+
+              {todo.recurring && todo.recurring !== 'NONE' && (
+                <Badge className="bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800/30">
+                  {todo.recurring.charAt(0) + todo.recurring.slice(1).toLowerCase()}
+                </Badge>
+              )}
+              
+              {/* Attachment count badge */}
+              {todo.attachments && todo.attachments.length > 0 && (
+                <Badge className="bg-gray-100 text-gray-600 border-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600">
+                  📎 {todo.attachments.length}
                 </Badge>
               )}
             </div>
@@ -139,6 +157,13 @@ const TodoItem = ({ todo, dragHandleProps, onDeletedTodo }) => {
               </button>
             </form>
           </div>
+
+          {/* Phase 6.3: File Attachments */}
+          <div className="pt-2 border-t border-gray-100 dark:border-gray-700">
+            <h4 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Attachments</h4>
+            <AttachmentUploader todoId={todo.id} initialAttachments={todo.attachments} />
+          </div>
+
         </div>
       )}
     </motion.div>
@@ -146,3 +171,5 @@ const TodoItem = ({ todo, dragHandleProps, onDeletedTodo }) => {
 };
 
 export default TodoItem;
+
+// ✅ DONE

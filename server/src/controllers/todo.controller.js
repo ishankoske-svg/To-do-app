@@ -2,13 +2,35 @@
 const prisma = require('../config/db');
 
 
+const emitToCollaborators = async (req, eventName, payload) => {
+  const io = req.app.get('io');
+  if (!io) return;
+
+  // We need to know the original owner of the todo to find all collaborators
+  // If payload has userId, that's the owner.
+  const ownerId = payload.userId || req.user.id;
+
+  const sharedLists = await prisma.sharedList.findMany({ where: { ownerId } });
+  const roomIds = [ownerId, ...sharedLists.map(s => s.memberId)];
+  
+  roomIds.forEach(roomId => {
+    io.to(roomId).emit(eventName, payload);
+  });
+};
+
 const getAllTodos = async (req, res, next) => {
   try {
     const { completed, priority, tag, search, sortBy, order } = req.query;
 
-    // ─── Build the WHERE clause ─────────────────────────────────────
-    // We start with just the userId, then add optional filters
-    const where = { userId: req.user.id };
+    // Find all users who have shared their lists with the current user
+    const sharedWithMe = await prisma.sharedList.findMany({
+      where: { memberId: req.user.id }
+    });
+    const ownerIds = sharedWithMe.map(s => s.ownerId);
+    const allValidUserIds = [req.user.id, ...ownerIds];
+
+    // Build the WHERE clause
+    const where = { userId: { in: allValidUserIds } };
 
     // ?completed=true or ?completed=false
     if (completed !== undefined) {
@@ -76,9 +98,19 @@ const getTodoById = async (req, res, next) => {
         tags: true
       }
     });
-    if (!todo || todo.userId !== req.user.id) {
+    
+    if (!todo) {
       return res.status(404).json({ success: false, message: 'Todo not found' });
     }
+
+    const sharedWithMe = await prisma.sharedList.findFirst({
+      where: { memberId: req.user.id, ownerId: todo.userId }
+    });
+
+    if (todo.userId !== req.user.id && !sharedWithMe) {
+      return res.status(404).json({ success: false, message: 'Todo not found' });
+    }
+
     res.json({ success: true, data: todo });
   } catch (error) {
     next(error);
@@ -97,6 +129,9 @@ const createTodo = async (req, res, next) => {
         tags: true
       }
     });
+
+    await emitToCollaborators(req, 'todo:created', todo);
+
     res.status(201).json({ success: true, data: todo });
   } catch (error) {
     next(error);
@@ -105,13 +140,22 @@ const createTodo = async (req, res, next) => {
 
 const updateTodo = async (req, res, next) => {
   try {
-    const todo = await prisma.todo.updateMany({
-      where: { id: req.params.id, userId: req.user.id },
-      data: req.body
+    const todoCheck = await prisma.todo.findUnique({ where: { id: req.params.id } });
+    if (!todoCheck) return res.status(404).json({ success: false, message: 'Todo not found' });
+
+    const sharedWithMe = await prisma.sharedList.findFirst({
+      where: { memberId: req.user.id, ownerId: todoCheck.userId }
     });
-    if (todo.count === 0) {
+
+    if (todoCheck.userId !== req.user.id && !sharedWithMe) {
       return res.status(404).json({ success: false, message: 'Todo not found' });
     }
+
+    await prisma.todo.update({
+      where: { id: req.params.id },
+      data: req.body
+    });
+    
     const updatedTodo = await prisma.todo.findUnique({ 
       where: { id: req.params.id },
       include: {
@@ -119,6 +163,9 @@ const updateTodo = async (req, res, next) => {
         tags: true
       }
     });
+
+    await emitToCollaborators(req, 'todo:updated', updatedTodo);
+
     res.json({ success: true, data: updatedTodo });
   } catch (error) {
     next(error);
@@ -127,12 +174,23 @@ const updateTodo = async (req, res, next) => {
 
 const deleteTodo = async (req, res, next) => {
   try {
-    const todo = await prisma.todo.deleteMany({
-      where: { id: req.params.id, userId: req.user.id }
+    const todoCheck = await prisma.todo.findUnique({ where: { id: req.params.id } });
+    if (!todoCheck) return res.status(404).json({ success: false, message: 'Todo not found' });
+
+    const sharedWithMe = await prisma.sharedList.findFirst({
+      where: { memberId: req.user.id, ownerId: todoCheck.userId }
     });
-    if (todo.count === 0) {
+
+    if (todoCheck.userId !== req.user.id && !sharedWithMe) {
       return res.status(404).json({ success: false, message: 'Todo not found' });
     }
+
+    await prisma.todo.delete({
+      where: { id: req.params.id }
+    });
+    
+    await emitToCollaborators(req, 'todo:deleted', { id: req.params.id, userId: todoCheck.userId });
+
     res.json({ success: true, message: 'Deleted' });
   } catch (error) {
     next(error);
@@ -142,7 +200,13 @@ const deleteTodo = async (req, res, next) => {
 const toggleComplete = async (req, res, next) => {
   try {
     const todo = await prisma.todo.findUnique({ where: { id: req.params.id } });
-    if (!todo || todo.userId !== req.user.id) {
+    if (!todo) return res.status(404).json({ success: false, message: 'Todo not found' });
+
+    const sharedWithMe = await prisma.sharedList.findFirst({
+      where: { memberId: req.user.id, ownerId: todo.userId }
+    });
+
+    if (todo.userId !== req.user.id && !sharedWithMe) {
       return res.status(404).json({ success: false, message: 'Todo not found' });
     }
     
@@ -154,8 +218,48 @@ const toggleComplete = async (req, res, next) => {
         tags: true
       }
     });
+
+    let nextTodo = null;
+    // Phase 6.2: Auto-create next recurring task if we are marking it as completed
+    if (updatedTodo.completed && todo.recurring !== 'NONE') {
+      let newDueDate = new Date(todo.dueDate || new Date());
+      if (todo.recurring === 'DAILY') {
+        newDueDate.setDate(newDueDate.getDate() + 1);
+      } else if (todo.recurring === 'WEEKLY') {
+        newDueDate.setDate(newDueDate.getDate() + 7);
+      } else if (todo.recurring === 'MONTHLY') {
+        newDueDate.setMonth(newDueDate.getMonth() + 1);
+      }
+
+      nextTodo = await prisma.todo.create({
+        data: {
+          title: todo.title,
+          description: todo.description,
+          priority: todo.priority,
+          recurring: todo.recurring,
+          dueDate: newDueDate,
+          userId: req.user.id,
+          completed: false,
+          // We can link tags too but let's keep it simple for now or connect existing tags
+          tags: {
+            connect: updatedTodo.tags.map(tag => ({ id: tag.id }))
+          }
+        },
+        include: {
+          subtasks: true,
+          tags: true
+        }
+      });
+    }
     
-    res.json({ success: true, data: updatedTodo });
+    // Emit events
+    await emitToCollaborators(req, 'todo:updated', updatedTodo);
+    if (nextTodo) {
+      await emitToCollaborators(req, 'todo:created', nextTodo);
+    }
+    
+    // Return both the completed todo and the newly created next one (if any)
+    res.json({ success: true, data: { completed: updatedTodo, next: nextTodo } });
   } catch (error) {
     next(error);
   }
@@ -184,6 +288,78 @@ const reorderTodos = async (req, res, next) => {
   }
 };
 
+const getTodoStats = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    
+    // Get all todos for user to calculate stats
+    const allTodos = await prisma.todo.findMany({
+      where: { userId }
+    });
+    
+    const totalTodos = allTodos.length;
+    const completedTodos = allTodos.filter(t => t.completed).length;
+    const activeTodos = totalTodos - completedTodos;
+    const completionRate = totalTodos === 0 ? 0 : Math.round((completedTodos / totalTodos) * 100);
+    
+    const byPriority = {
+      HIGH: allTodos.filter(t => t.priority === 'HIGH').length,
+      MEDIUM: allTodos.filter(t => t.priority === 'MEDIUM').length,
+      LOW: allTodos.filter(t => t.priority === 'LOW').length,
+    };
+    
+    const now = new Date();
+    const overdueCount = allTodos.filter(t => t.dueDate && new Date(t.dueDate) < now && !t.completed).length;
+    
+    const sevenDaysFromNow = new Date(now);
+    sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7);
+    const upcomingCount = allTodos.filter(t => t.dueDate && new Date(t.dueDate) >= now && new Date(t.dueDate) <= sevenDaysFromNow && !t.completed).length;
+
+    // Calculate completed by day (last 7 days)
+    const sevenDaysAgo = new Date(now);
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    
+    const completedLast7Days = allTodos.filter(t => t.completed && new Date(t.updatedAt) >= sevenDaysAgo);
+    
+    const completedByDayMap = {};
+    // Initialize last 7 days with 0
+    for(let i=6; i>=0; i--) {
+      const d = new Date(now);
+      d.setDate(d.getDate() - i);
+      const dateString = d.toISOString().split('T')[0];
+      completedByDayMap[dateString] = 0;
+    }
+    
+    completedLast7Days.forEach(t => {
+      const dateString = new Date(t.updatedAt).toISOString().split('T')[0];
+      if (completedByDayMap[dateString] !== undefined) {
+        completedByDayMap[dateString]++;
+      }
+    });
+    
+    const completedByDay = Object.keys(completedByDayMap).map(date => ({
+      date,
+      count: completedByDayMap[date]
+    }));
+
+    res.json({
+      success: true,
+      data: {
+        totalTodos,
+        completedTodos,
+        activeTodos,
+        completionRate,
+        byPriority,
+        completedByDay,
+        overdueCount,
+        upcomingCount
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllTodos,
   getTodoById,
@@ -191,5 +367,7 @@ module.exports = {
   updateTodo,
   deleteTodo,
   toggleComplete,
-  reorderTodos
+  reorderTodos,
+  getTodoStats
 };
+// ✅ DONE

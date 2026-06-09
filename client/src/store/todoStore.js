@@ -77,10 +77,19 @@ export const useTodoStore = create((set, get) => ({
 
   toggleTodo: async (id) => {
     try {
-      const updatedTodo = await todosApi.toggleComplete(id);
-      set((state) => ({
-        todos: state.todos.map(t => (t.id === id ? { ...t, ...updatedTodo } : t))
-      }));
+      const result = await todosApi.toggleComplete(id);
+      // Backend now returns { completed: Todo, next: Todo | null }
+      const completedTodo = result.completed || result; // Fallback in case old response shape is cached
+      const nextTodo = result.next;
+
+      set((state) => {
+        let newTodos = state.todos.map(t => (t.id === id ? { ...t, ...completedTodo } : t));
+        if (nextTodo) {
+          // Add the newly created recurring task to the top
+          newTodos = [nextTodo, ...newTodos];
+        }
+        return { todos: newTodos };
+      });
     } catch (error) {
       console.error(error);
     }
@@ -176,5 +185,37 @@ export const useTodoStore = create((set, get) => ({
     } catch (error) {
       console.error(error);
     }
+  },
+
+  // ─── Socket / Real-time ──────────────────────────────────────────
+  initSocket: () => {
+    import('../api/socket').then(({ default: socket }) => {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      socket.auth = { token };
+      socket.connect();
+
+      socket.on('todo:created', (todo) => {
+        set(state => {
+          if (state.todos.find(t => t.id === todo.id)) return state;
+          return { todos: [todo, ...state.todos] };
+        });
+      });
+
+      socket.on('todo:updated', (todo) => {
+        set(state => ({
+          todos: state.todos.map(t => t.id === todo.id ? { ...t, ...todo } : t)
+        }));
+      });
+
+      socket.on('todo:deleted', (data) => {
+        set(state => ({
+          todos: state.todos.filter(t => t.id !== data.id)
+        }));
+      });
+    });
   }
 }));
+
+// ✅ DONE

@@ -6,6 +6,7 @@ const createTodoSchema = z.object({
     title: z.string({ required_error: 'Title is required' }).min(1, 'Title cannot be empty'),
     description: z.string().optional(),
     priority: z.enum(['LOW', 'MEDIUM', 'HIGH']).optional(),
+    recurring: z.enum(['NONE', 'DAILY', 'WEEKLY', 'MONTHLY']).optional(),
     dueDate: z.string().datetime().optional().nullable(),
   })
 });
@@ -15,6 +16,7 @@ const updateTodoSchema = z.object({
     title: z.string().min(1, 'Title cannot be empty').optional(),
     description: z.string().optional().nullable(),
     priority: z.enum(['LOW', 'MEDIUM', 'HIGH']).optional(),
+    recurring: z.enum(['NONE', 'DAILY', 'WEEKLY', 'MONTHLY']).optional(),
     dueDate: z.string().datetime().optional().nullable(),
     completed: z.boolean().optional(),
     order: z.number().optional()
