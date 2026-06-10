@@ -1,10 +1,10 @@
+// d:\projects\personal-projects\to-do-list\client\src\components\todos\TodoItem.jsx
 import React, { useState } from 'react';
 import { useTodoStore } from '../../store/todoStore';
 import { getPriorityDetails } from '../../utils/priorityHelpers';
 import { formatDate } from '../../utils/dateHelpers';
 import Badge from '../common/Badge';
 import AttachmentUploader from './AttachmentUploader';
-
 import { motion } from 'framer-motion';
 
 const TodoItem = ({ todo, dragHandleProps, onDeletedTodo }) => {
@@ -28,42 +28,46 @@ const TodoItem = ({ todo, dragHandleProps, onDeletedTodo }) => {
 
   return (
     <motion.div 
-      whileHover={{ scale: 1.01 }}
-      className="flex flex-col p-4 bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 last:border-b-0 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors group"
+      whileHover={{ scale: 1.005 }}
+      className="flex flex-col p-3 sm:p-4 bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 last:border-b-0 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors group"
     >
-      
-      {/* Top Row: Drag Handle, Checkbox, Title, Badges, Delete */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4 flex-1">
-          {/* Drag Handle */}
+      {/* Top Row: Drag Handle, Checkbox, Title, Delete */}
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex items-start gap-2 sm:gap-4 flex-1 min-w-0">
+          {/* Drag Handle — hidden on mobile, shown on sm+ */}
           <div 
             {...dragHandleProps} 
-            className={`text-gray-300 dark:text-gray-600 hover:text-gray-500 dark:hover:text-gray-400 ${dragHandleProps?.disabled ? 'cursor-not-allowed opacity-30' : 'cursor-grab active:cursor-grabbing'}`}
+            className={`hidden sm:block mt-1 text-gray-300 dark:text-gray-600 hover:text-gray-500 dark:hover:text-gray-400 ${dragHandleProps?.disabled ? 'cursor-not-allowed opacity-30' : 'cursor-grab active:cursor-grabbing'}`}
             title={dragHandleProps?.disabled ? "Sorting disabled while filtered" : "Drag to reorder"}
           >
             ⠿
           </div>
+
+          {/* Checkbox */}
           <motion.input 
             whileTap={{ scale: 0.9 }}
             type="checkbox" 
             checked={todo.completed}
             onChange={() => toggleTodo(todo.id)}
-            className="w-5 h-5 cursor-pointer accent-indigo-600 rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:ring-indigo-500 transition-all"
+            className="mt-1 w-5 h-5 flex-shrink-0 cursor-pointer accent-indigo-600 rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:ring-indigo-500 transition-all"
           />
-          <div className="flex flex-col">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2">
-                <span 
-                  className={`text-lg transition-all duration-300 cursor-pointer ${todo.completed ? 'line-through text-gray-400 dark:text-gray-500 opacity-50' : 'text-gray-800 dark:text-gray-100'}`}
-                  onClick={() => setIsExpanded(!isExpanded)}
-                >
-                  {todo.title}
-                </span>
-                {todo.recurring && todo.recurring !== 'NONE' && (
-                  <span className="text-sm" title={`Repeats ${todo.recurring.toLowerCase()}`}>🔁</span>
-                )}
-              </div>
-              
+
+          {/* Title + badges block — tappable to expand */}
+          <div className="flex flex-col flex-1 min-w-0" onClick={() => setIsExpanded(!isExpanded)}>
+            {/* Title row */}
+            <div className="flex items-center gap-2 flex-wrap">
+              <span 
+                className={`text-base sm:text-lg transition-all duration-300 cursor-pointer leading-snug ${todo.completed ? 'line-through text-gray-400 dark:text-gray-500 opacity-50' : 'text-gray-800 dark:text-gray-100'}`}
+              >
+                {todo.title}
+              </span>
+              {todo.recurring && todo.recurring !== 'NONE' && (
+                <span className="text-sm flex-shrink-0" title={`Repeats ${todo.recurring.toLowerCase()}`}>🔁</span>
+              )}
+            </div>
+
+            {/* Badges row — wraps naturally on small screens */}
+            <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
               <Badge className={priorityDetails.colorClass}>{priorityDetails.label}</Badge>
               
               {todo.dueDate && (
@@ -78,39 +82,42 @@ const TodoItem = ({ todo, dragHandleProps, onDeletedTodo }) => {
                 </Badge>
               )}
               
-              {/* Attachment count badge */}
               {todo.attachments && todo.attachments.length > 0 && (
                 <Badge className="bg-gray-100 text-gray-600 border-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600">
                   📎 {todo.attachments.length}
                 </Badge>
               )}
+
+              {/* Tags */}
+              {todo.tags && todo.tags.map(tag => (
+                <Badge key={tag.id} colorCode={tag.color}>{tag.name}</Badge>
+              ))}
             </div>
-            
-            {/* Tags preview */}
-            {todo.tags && todo.tags.length > 0 && (
-              <div className="flex gap-1 mt-1">
-                {todo.tags.map(tag => (
-                  <Badge key={tag.id} colorCode={tag.color}>{tag.name}</Badge>
-                ))}
-              </div>
-            )}
           </div>
         </div>
 
+        {/* Delete button — always visible on mobile, hover-only on desktop */}
         <button 
-          onClick={async () => {
+          onClick={async (e) => {
+            e.stopPropagation();
             const deleted = await removeTodo(todo.id);
             if (deleted) onDeletedTodo?.(deleted);
           }}
-          className="text-red-400 dark:text-red-500 opacity-0 group-hover:opacity-100 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 px-3 py-1 rounded-md font-medium text-sm transition-all"
+          className="flex-shrink-0 text-red-400 dark:text-red-500 
+            opacity-100 sm:opacity-0 sm:group-hover:opacity-100 
+            hover:text-red-600 dark:hover:text-red-400 
+            hover:bg-red-50 dark:hover:bg-red-900/20 
+            px-2 sm:px-3 py-1 rounded-md font-medium text-sm transition-all"
+          title="Delete"
         >
-          Delete
+          <span className="sm:hidden">🗑</span>
+          <span className="hidden sm:inline">Delete</span>
         </button>
       </div>
 
       {/* Expanded section: Description & Subtasks */}
       {isExpanded && (
-        <div className="ml-9 mt-4 pl-4 border-l-2 border-gray-100 dark:border-gray-700 space-y-4 animate-in fade-in slide-in-from-top-2">
+        <div className="ml-7 sm:ml-9 mt-4 pl-3 sm:pl-4 border-l-2 border-gray-100 dark:border-gray-700 space-y-4">
           {todo.description && (
             <p className="text-gray-600 dark:text-gray-400 text-sm whitespace-pre-wrap">{todo.description}</p>
           )}
@@ -120,20 +127,23 @@ const TodoItem = ({ todo, dragHandleProps, onDeletedTodo }) => {
             
             {todo.subtasks && todo.subtasks.map(subtask => (
               <div key={subtask.id} className="flex items-center justify-between group/sub">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-1 min-w-0">
                   <input
                     type="checkbox"
                     checked={subtask.completed}
                     onChange={() => toggleSubtask(todo.id, subtask.id)}
-                    className="w-4 h-4 cursor-pointer accent-indigo-600 rounded"
+                    className="w-4 h-4 flex-shrink-0 cursor-pointer accent-indigo-600 rounded"
                   />
-                  <span className={`text-sm ${subtask.completed ? 'line-through text-gray-400 dark:text-gray-500' : 'text-gray-700 dark:text-gray-300'}`}>
+                  <span className={`text-sm truncate ${subtask.completed ? 'line-through text-gray-400 dark:text-gray-500' : 'text-gray-700 dark:text-gray-300'}`}>
                     {subtask.title}
                   </span>
                 </div>
+                {/* Subtask delete — always visible on mobile */}
                 <button
                   onClick={() => deleteSubtask(todo.id, subtask.id)}
-                  className="text-gray-300 hover:text-red-500 opacity-0 group-hover/sub:opacity-100 text-xs px-2 transition-all"
+                  className="flex-shrink-0 text-gray-300 hover:text-red-500 
+                    opacity-100 sm:opacity-0 sm:group-hover/sub:opacity-100 
+                    text-xs px-2 transition-all"
                 >
                   ✕
                 </button>
@@ -146,24 +156,23 @@ const TodoItem = ({ todo, dragHandleProps, onDeletedTodo }) => {
                 value={subtaskTitle}
                 onChange={(e) => setSubtaskTitle(e.target.value)}
                 placeholder="Add a subtask..."
-                className="flex-1 px-3 py-1 text-sm bg-gray-50 dark:bg-gray-700 rounded border border-gray-200 dark:border-gray-600 dark:text-gray-100 dark:placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                className="flex-1 min-w-0 px-3 py-1.5 text-sm bg-gray-50 dark:bg-gray-700 rounded border border-gray-200 dark:border-gray-600 dark:text-gray-100 dark:placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-indigo-500"
               />
               <button
                 type="submit"
                 disabled={!subtaskTitle.trim()}
-                className="px-3 py-1 text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50"
+                className="flex-shrink-0 px-3 py-1.5 text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50"
               >
                 Add
               </button>
             </form>
           </div>
 
-          {/* Phase 6.3: File Attachments */}
+          {/* File Attachments */}
           <div className="pt-2 border-t border-gray-100 dark:border-gray-700">
-            <h4 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Attachments</h4>
+            <h4 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Attachments</h4>
             <AttachmentUploader todoId={todo.id} initialAttachments={todo.attachments} />
           </div>
-
         </div>
       )}
     </motion.div>

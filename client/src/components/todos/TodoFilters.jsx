@@ -64,11 +64,12 @@ const TodoFilters = forwardRef((props, ref) => {
       </div>
 
       {/* Row 2: Priority, Tag, Sort dropdowns + Search */}
-      <div className="flex flex-wrap gap-3">
+      {/* On mobile: 2-column grid. On sm+: flex-wrap */}
+      <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 sm:gap-3">
         <select
           value={filters.priority || ''}
           onChange={(e) => setFilter('priority', e.target.value || null)}
-          className="px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="w-full sm:w-auto px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
         >
           <option value="">All Priorities</option>
           <option value="HIGH">High</option>
@@ -79,7 +80,7 @@ const TodoFilters = forwardRef((props, ref) => {
         <select
           value={filters.tag || ''}
           onChange={(e) => setFilter('tag', e.target.value || null)}
-          className="px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="w-full sm:w-auto px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
         >
           <option value="">All Tags</option>
           {tags.map(tag => (
@@ -94,31 +95,34 @@ const TodoFilters = forwardRef((props, ref) => {
             setFilter('sortBy', sortBy);
             setFilter('order', order);
           }}
-          className="px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="w-full sm:w-auto px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
         >
           <option value="createdAt_desc">Newest First</option>
           <option value="createdAt_asc">Oldest First</option>
-          <option value="dueDate_asc">Due Date (Soonest)</option>
-          <option value="priority_asc">Priority (High first)</option>
+          <option value="dueDate_asc">Due Soon</option>
+          <option value="priority_asc">Priority ↑</option>
         </select>
 
-        <input
-          ref={searchRef}
-          type="text"
-          value={searchInput}
-          onChange={(e) => setSearchInput(e.target.value)}
-          placeholder="Search tasks... (press /)"
-          className="flex-1 min-w-[150px] px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 dark:bg-gray-700 text-sm text-gray-700 dark:text-gray-200 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        />
+        {/* Search — full width on mobile */}
+        <div className="col-span-2 sm:flex-1 flex gap-2">
+          <input
+            ref={searchRef}
+            type="text"
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            placeholder="Search tasks..."
+            className="flex-1 min-w-0 px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 dark:bg-gray-700 text-sm text-gray-700 dark:text-gray-200 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
 
-        {hasActiveFilters && (
-          <button
-            onClick={handleReset}
-            className="px-4 py-2 text-sm text-red-500 hover:text-red-700 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg font-medium transition-colors border border-red-200 dark:border-red-800/30"
-          >
-            Clear Filters
-          </button>
-        )}
+          {hasActiveFilters && (
+            <button
+              onClick={handleReset}
+              className="flex-shrink-0 px-3 py-2 text-sm text-red-500 hover:text-red-700 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg font-medium transition-colors border border-red-200 dark:border-red-800/30"
+            >
+              Clear
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

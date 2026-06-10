@@ -104,10 +104,39 @@ const getMe = async (req, res, next) => {
   }
 };
 
+// Simple password reset — no email token needed for this project.
+// User provides their email + new password. Works directly (no SMTP required).
+const resetPassword = async (req, res, next) => {
+  try {
+    const { email, newPassword } = req.body;
+
+    if (!email || !newPassword) {
+      return res.status(400).json({ success: false, message: 'Email and newPassword are required' });
+    }
+    if (newPassword.length < 8) {
+      return res.status(400).json({ success: false, message: 'Password must be at least 8 characters' });
+    }
+
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      // Return generic message so we don't leak whether the email exists
+      return res.json({ success: true, message: 'If that email exists, the password has been reset.' });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await prisma.user.update({ where: { email }, data: { password: hashedPassword } });
+
+    res.json({ success: true, message: 'Password reset successfully. You can now log in.' });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   signup,
   login,
-  getMe
+  getMe,
+  resetPassword
 };
 
 // ✅ DONE

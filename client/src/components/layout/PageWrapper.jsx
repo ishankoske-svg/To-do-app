@@ -5,7 +5,7 @@ import React from 'react';
 
 const PageWrapper = ({ children }) => {
   return (
-    <div className="max-w-3xl mx-auto px-4 pb-12">
+    <div className="max-w-3xl mx-auto px-3 sm:px-4 pb-16 sm:pb-12">
       {children}
     </div>
   );

@@ -86,28 +86,31 @@ const DashboardPage = () => {
     <PageWrapper>
       <NotificationBanner permission={permission} onRequestPermission={requestPermission} />
       
-      <div className="text-center mt-8 mb-6 relative">
-        <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 tracking-tight">
-          My Tasks
-        </h1>
-        <p className="text-gray-500 dark:text-gray-400 mt-2">Stay organized, get things done.</p>
-        
-        {/* Keyboard shortcut hints */}
-        <p className="text-xs text-gray-400 dark:text-gray-600 mt-1">
+      <div className="text-center mt-6 sm:mt-8 mb-6">
+        {/* Title row with Share button on same line */}
+        <div className="flex items-center justify-center gap-3 mb-2">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 tracking-tight">
+            My Tasks
+          </h1>
+          <button 
+            onClick={() => setShowCollabModal(true)}
+            className="flex-shrink-0 px-3 py-1.5 bg-white dark:bg-gray-800 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800 rounded-full text-sm font-medium hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors shadow-sm flex items-center gap-1.5"
+          >
+            <span>👥</span>
+            <span className="hidden sm:inline">Share</span>
+          </button>
+        </div>
+
+        <p className="text-gray-500 dark:text-gray-400">Stay organized, get things done.</p>
+
+        {/* Keyboard shortcut hints — only shown on devices with a keyboard */}
+        <p className="hidden md:block text-xs text-gray-400 dark:text-gray-600 mt-1">
           <kbd className="px-1 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-[10px] font-mono">Ctrl+N</kbd> new task
           {' · '}
           <kbd className="px-1 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-[10px] font-mono">/</kbd> search
           {' · '}
           <kbd className="px-1 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-[10px] font-mono">Ctrl+D</kbd> dark mode
         </p>
-
-        {/* Share Button */}
-        <button 
-          onClick={() => setShowCollabModal(true)}
-          className="absolute right-0 top-0 px-3 py-1.5 bg-white dark:bg-gray-800 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800 rounded-full text-sm font-medium hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors shadow-sm flex items-center gap-2"
-        >
-          <span>👥</span> Share
-        </button>
       </div>
 
       {error && (

@@ -13,6 +13,9 @@ router.post('/login', validate(loginSchema), authController.login);
 // Protected route — requires a valid JWT
 router.get('/me', authMiddleware, authController.getMe);
 
+// Public password reset — email + newPassword (no SMTP needed)
+router.post('/reset-password', authController.resetPassword);
+
 module.exports = router;
 
 // ✅ DONE
