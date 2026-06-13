@@ -26,11 +26,16 @@ function App() {
         We'll use a solid dark background on the HTML/Body in index.css so there's a base color,
         but for the app wrapper, we let the shadow show through.
       */}
-      <div className="relative min-h-screen bg-slate-50 text-slate-900 dark:bg-gray-950 dark:text-gray-100 font-sans selection:bg-indigo-100 selection:text-indigo-900 dark:selection:bg-indigo-900 dark:selection:text-indigo-100 transition-colors duration-200 overflow-x-hidden">
+      <div className="relative min-h-screen bg-slate-50 text-slate-900 dark:bg-black dark:text-gray-100 font-sans selection:bg-indigo-100 selection:text-indigo-900 dark:selection:bg-indigo-900 dark:selection:text-indigo-100 transition-colors duration-200 overflow-x-hidden">
         
         {/* Etheral Shadow Background - Only visible in dark mode */}
-        <div className="hidden dark:block fixed inset-0 z-0 opacity-60">
-          <EtheralShadow color="rgba(99, 102, 241, 0.15)" />
+        <div className="hidden dark:block fixed inset-0 z-0 pointer-events-none">
+          <EtheralShadow 
+            color="rgba(128, 128, 128, 1)"
+            animation={{ scale: 100, speed: 90 }}
+            noise={{ opacity: 1, scale: 1.2 }}
+            sizing="fill"
+          />
         </div>
 
         {/* Content wrapper with z-10 so it sits above the background */}

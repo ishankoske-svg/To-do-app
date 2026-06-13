@@ -43,7 +43,7 @@ const TodoForm = forwardRef((props, ref) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full mt-8 bg-white dark:bg-gray-800 p-3 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 transition-all focus-within:ring-2 focus-within:ring-indigo-100 focus-within:border-indigo-300 dark:focus-within:ring-indigo-900 dark:focus-within:border-indigo-500">
+    <form onSubmit={handleSubmit} className="w-full mt-8 bg-white dark:bg-[#111111]/80 backdrop-blur-md p-3 rounded-xl shadow-sm border border-gray-200 dark:border-white/10 transition-all focus-within:ring-2 focus-within:ring-indigo-100 focus-within:border-indigo-300 dark:focus-within:ring-indigo-900 dark:focus-within:border-indigo-500">
       <div className="flex gap-3">
         <input 
           ref={titleInputRef}

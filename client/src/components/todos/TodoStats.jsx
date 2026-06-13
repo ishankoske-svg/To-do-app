@@ -24,7 +24,7 @@ const TodoStats = () => {
       </div>
 
       {/* The "progress bar" is a gray container with an inner div that has a dynamic width */}
-      <div className="h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+      <div className="h-2 bg-gray-100 dark:bg-white/10 rounded-full overflow-hidden backdrop-blur-sm">
         <div
           className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full transition-all duration-500"
           style={{ width: `${percentage}%` }}

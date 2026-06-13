@@ -94,7 +94,7 @@ const DashboardPage = () => {
           </h1>
           <button 
             onClick={() => setShowCollabModal(true)}
-            className="flex-shrink-0 px-3 py-1.5 bg-white dark:bg-gray-800 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800 rounded-full text-sm font-medium hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors shadow-sm flex items-center gap-1.5"
+            className="flex-shrink-0 px-3 py-1.5 bg-white dark:bg-[#111111]/80 backdrop-blur-md text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-white/10 rounded-full text-sm font-medium hover:bg-indigo-50 dark:hover:bg-white/10 transition-colors shadow-sm flex items-center gap-1.5"
           >
             <span>👥</span>
             <span className="hidden sm:inline">Share</span>
@@ -105,11 +105,11 @@ const DashboardPage = () => {
 
         {/* Keyboard shortcut hints — only shown on devices with a keyboard */}
         <p className="hidden md:block text-xs text-gray-400 dark:text-gray-600 mt-1">
-          <kbd className="px-1 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-[10px] font-mono">Ctrl+N</kbd> new task
+          <kbd className="px-1 py-0.5 bg-gray-100 dark:bg-black/50 dark:border dark:border-white/10 rounded text-[10px] font-mono">Ctrl+N</kbd> new task
           {' · '}
-          <kbd className="px-1 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-[10px] font-mono">/</kbd> search
+          <kbd className="px-1 py-0.5 bg-gray-100 dark:bg-black/50 dark:border dark:border-white/10 rounded text-[10px] font-mono">/</kbd> search
           {' · '}
-          <kbd className="px-1 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-[10px] font-mono">Ctrl+D</kbd> dark mode
+          <kbd className="px-1 py-0.5 bg-gray-100 dark:bg-black/50 dark:border dark:border-white/10 rounded text-[10px] font-mono">Ctrl+D</kbd> dark mode
         </p>
       </div>
 

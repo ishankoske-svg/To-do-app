@@ -17,7 +17,7 @@ const Navbar = () => {
     : user?.email.charAt(0).toUpperCase() || 'U';
 
   return (
-    <nav className="sticky top-0 z-50 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm border-b border-gray-200 dark:border-gray-800 shadow-sm transition-colors duration-200">
+    <nav className="sticky top-0 z-50 bg-white/90 dark:bg-[#0a0a0a]/80 backdrop-blur-md border-b border-gray-200 dark:border-white/10 shadow-sm transition-colors duration-200">
       <div className="max-w-3xl mx-auto px-4 h-14 flex items-center justify-between">
         
         <div className="flex items-center gap-4">

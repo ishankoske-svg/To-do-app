@@ -78,7 +78,7 @@ const TodoList = ({ onDeletedTodo }) => {
   if (todos.length === 0) return <EmptyState isFiltered={hasActiveFilters} />;
 
   return (
-    <div className="mt-4 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden transition-colors">
+    <div className="mt-4 bg-white dark:bg-[#111111]/80 backdrop-blur-md rounded-xl shadow-sm border border-gray-100 dark:border-white/10 overflow-hidden transition-colors">
       <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={todos.map(t => t.id)} strategy={verticalListSortingStrategy}>
           <AnimatePresence mode="popLayout">

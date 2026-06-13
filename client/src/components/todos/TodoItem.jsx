@@ -29,7 +29,7 @@ const TodoItem = ({ todo, dragHandleProps, onDeletedTodo }) => {
   return (
     <motion.div 
       whileHover={{ scale: 1.005 }}
-      className="flex flex-col p-3 sm:p-4 bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 last:border-b-0 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors group"
+      className="flex flex-col p-3 sm:p-4 bg-white dark:bg-transparent border-b border-gray-100 dark:border-white/5 last:border-b-0 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group"
     >
       {/* Top Row: Drag Handle, Checkbox, Title, Delete */}
       <div className="flex items-start justify-between gap-2">
@@ -49,7 +49,7 @@ const TodoItem = ({ todo, dragHandleProps, onDeletedTodo }) => {
             type="checkbox" 
             checked={todo.completed}
             onChange={() => toggleTodo(todo.id)}
-            className="mt-1 w-5 h-5 flex-shrink-0 cursor-pointer accent-indigo-600 rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:ring-indigo-500 transition-all"
+            className="mt-1 w-5 h-5 flex-shrink-0 cursor-pointer accent-indigo-600 rounded border-gray-300 dark:border-gray-600 dark:bg-black/50 focus:ring-indigo-500 transition-all"
           />
 
           {/* Title + badges block — tappable to expand */}
@@ -117,7 +117,7 @@ const TodoItem = ({ todo, dragHandleProps, onDeletedTodo }) => {
 
       {/* Expanded section: Description & Subtasks */}
       {isExpanded && (
-        <div className="ml-7 sm:ml-9 mt-4 pl-3 sm:pl-4 border-l-2 border-gray-100 dark:border-gray-700 space-y-4">
+        <div className="ml-7 sm:ml-9 mt-4 pl-3 sm:pl-4 border-l-2 border-gray-100 dark:border-white/10 space-y-4">
           {todo.description && (
             <p className="text-gray-600 dark:text-gray-400 text-sm whitespace-pre-wrap">{todo.description}</p>
           )}
@@ -156,12 +156,12 @@ const TodoItem = ({ todo, dragHandleProps, onDeletedTodo }) => {
                 value={subtaskTitle}
                 onChange={(e) => setSubtaskTitle(e.target.value)}
                 placeholder="Add a subtask..."
-                className="flex-1 min-w-0 px-3 py-1.5 text-sm bg-gray-50 dark:bg-gray-700 rounded border border-gray-200 dark:border-gray-600 dark:text-gray-100 dark:placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                className="flex-1 min-w-0 px-3 py-1.5 text-sm bg-gray-50 dark:bg-black/40 rounded border border-gray-200 dark:border-white/10 dark:text-gray-100 dark:placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-indigo-500"
               />
               <button
                 type="submit"
                 disabled={!subtaskTitle.trim()}
-                className="flex-shrink-0 px-3 py-1.5 text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50"
+                className="flex-shrink-0 px-3 py-1.5 text-xs font-medium bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-white/20 disabled:opacity-50"
               >
                 Add
               </button>
@@ -169,7 +169,7 @@ const TodoItem = ({ todo, dragHandleProps, onDeletedTodo }) => {
           </div>
 
           {/* File Attachments */}
-          <div className="pt-2 border-t border-gray-100 dark:border-gray-700">
+          <div className="pt-2 border-t border-gray-100 dark:border-white/5">
             <h4 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Attachments</h4>
             <AttachmentUploader todoId={todo.id} initialAttachments={todo.attachments} />
           </div>

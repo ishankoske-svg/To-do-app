@@ -40,10 +40,10 @@ const TodoFilters = forwardRef((props, ref) => {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-4 mt-4 space-y-4">
+    <div className="bg-white dark:bg-[#111111]/80 backdrop-blur-md rounded-xl border border-gray-200 dark:border-white/10 shadow-sm p-4 mt-4 space-y-4">
       
       {/* Completion Tabs */}
-      <div className="flex border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden text-sm font-medium">
+      <div className="flex border border-gray-200 dark:border-white/10 rounded-lg overflow-hidden text-sm font-medium">
         {[
           { label: 'All', value: null },
           { label: 'Active', value: false },
@@ -55,7 +55,7 @@ const TodoFilters = forwardRef((props, ref) => {
             className={`flex-1 py-2 transition-colors ${
               filters.completed === tab.value
                 ? 'bg-indigo-600 text-white'
-                : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50'
+                : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5'
             }`}
           >
             {tab.label}
@@ -69,7 +69,7 @@ const TodoFilters = forwardRef((props, ref) => {
         <select
           value={filters.priority || ''}
           onChange={(e) => setFilter('priority', e.target.value || null)}
-          className="w-full sm:w-auto px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="w-full sm:w-auto px-3 py-2 rounded-lg border border-gray-200 dark:border-white/10 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-[#1a1a1a]/80 focus:outline-none focus:ring-2 focus:ring-indigo-500"
         >
           <option value="">All Priorities</option>
           <option value="HIGH">High</option>
@@ -80,7 +80,7 @@ const TodoFilters = forwardRef((props, ref) => {
         <select
           value={filters.tag || ''}
           onChange={(e) => setFilter('tag', e.target.value || null)}
-          className="w-full sm:w-auto px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="w-full sm:w-auto px-3 py-2 rounded-lg border border-gray-200 dark:border-white/10 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-[#1a1a1a]/80 focus:outline-none focus:ring-2 focus:ring-indigo-500"
         >
           <option value="">All Tags</option>
           {tags.map(tag => (
@@ -95,7 +95,7 @@ const TodoFilters = forwardRef((props, ref) => {
             setFilter('sortBy', sortBy);
             setFilter('order', order);
           }}
-          className="w-full sm:w-auto px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="w-full sm:w-auto px-3 py-2 rounded-lg border border-gray-200 dark:border-white/10 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-[#1a1a1a]/80 focus:outline-none focus:ring-2 focus:ring-indigo-500"
         >
           <option value="createdAt_desc">Newest First</option>
           <option value="createdAt_asc">Oldest First</option>
@@ -111,7 +111,7 @@ const TodoFilters = forwardRef((props, ref) => {
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             placeholder="Search tasks..."
-            className="flex-1 min-w-0 px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 dark:bg-gray-700 text-sm text-gray-700 dark:text-gray-200 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="flex-1 min-w-0 px-3 py-2 rounded-lg border border-gray-200 dark:border-white/10 dark:bg-[#1a1a1a]/80 text-sm text-gray-700 dark:text-gray-200 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
 
           {hasActiveFilters && (
